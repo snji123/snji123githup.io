@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presocráticos</title>
- <style>
+<style>
   * {
     margin: 0;
     padding: 0;
@@ -17,15 +17,23 @@
     background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
     color: #2c2c2c;
     line-height: 1.6;
+    min-height: 100vh;       /* 🔧 asegura altura mínima */
     padding: 0;              /* 🔧 quitamos padding fijo */
     overflow-x: hidden;      /* 🔧 elimina hueco lateral */
+  }
+
+  /* Contenedor central */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;         /* 🔧 margen lateral flexible */
   }
 
   .navbar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;                /* 🔧 mejor que width:100% */
     background: #1c1c1c;
     color: #fff;
     display: flex;
@@ -62,7 +70,7 @@
   }
 
   header {
-    margin-top: 90px;
+    margin-top: 120px;       /* 🔧 más espacio bajo la barra fija */
     text-align: center;
   }
 
@@ -106,17 +114,9 @@
     transition: all 0.8s ease;
   }
 
-  .reveal.right {
-    transform: translateX(100px);
-  }
-
-  .reveal.left {
-    transform: translateX(-100px);
-  }
-
-  .reveal.top {
-    transform: translateY(-100px);
-  }
+  .reveal.right { transform: translateX(100px); }
+  .reveal.left  { transform: translateX(-100px); }
+  .reveal.top   { transform: translateY(-100px); }
 
   .reveal.active {
     opacity: 1;
@@ -146,6 +146,9 @@
     .card {
       width: 95%;        /* 🔧 ocupa casi todo el ancho en móvil */
       padding: 15px;     /* 🔧 menos padding */
+    }
+    .container {
+      padding: 0 8px;    /* 🔧 menos margen lateral en móvil */
     }
   }
 </style>
