@@ -4,156 +4,124 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presocráticos</title>
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      color: #2c2c2c;
+      line-height: 1.6;
+      padding: 0 40px;
+    }
 
-  body {
-    margin: 0;
-    font-family: 'Georgia', serif;
-    background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
-    color: #2c2c2c;
-    line-height: 1.6;
-    padding: 0;              /* 🔧 quitamos padding fijo */
-    overflow-x: hidden;      /* 🔧 elimina hueco lateral */
-  }
-
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #1c1c1c;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    padding: 15px 0;
-    z-index: 1000;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  }
-
-  .logo-fixed {
-    position: fixed;
-    top: 55px; /* justo debajo de la barra */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-  }
-
-  .logo-fixed img {
-    width: 150px;
-    height: auto;
-  }
-
-  .navbar a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 18px;
-    transition: color 0.3s;
-  }
-
-  .navbar a:hover {
-    color: #d4af37;
-  }
-
-  header {
-    margin-top: 90px;
-    text-align: center;
-  }
-
-  header img {
-    width: 150px;
-    border-radius: 10px;
-  }
-
-  header h1 {
-    font-size: 40px;
-    color: #d4af37;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
-  }
-
-  .card {
-    margin: 20px auto;
-    max-width: 900px;
-    width: 100%; /* 🔧 que se adapte al ancho */
-    background: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-
-  h1 {
-    color: #1c1c1c;
-    border-left: 5px solid #d4af37;
-    padding-left: 10px;
-    margin-bottom: 15px;
-  }
-
-  p {
-    margin-bottom: 20px;
-  }
-
-  /* Scroll reveal variantes */
-  .reveal {
-    opacity: 0;
-    transition: all 0.8s ease;
-  }
-
-  .reveal.right {
-    transform: translateX(100px);
-  }
-
-  .reveal.left {
-    transform: translateX(-100px);
-  }
-
-  .reveal.top {
-    transform: translateY(-100px);
-  }
-
-  .reveal.active {
-    opacity: 1;
-    transform: translateX(0) translateY(0);
-  }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    background: #1c1c1c;
-    color: #fff;
-    margin-top: 40px;
-  }
-
-  /* 🔧 Ajustes para móviles */
-  @media (max-width: 768px) {
     .navbar {
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .navbar a {
-      font-size: 14px; /* más pequeño en móvil */
-    }
-    header h1 {
-      font-size: 24px;
-    }
-    h1 {
-      font-size: 18px;
-    }
-    p {
-      font-size: 14px;
-    }
-    .card {
-      width: 95%;        /* 🔧 ocupa casi todo el ancho en móvil */
-      padding: 15px;     /* 🔧 menos padding para que no se vea apretado */
-    }
-  }
-</style>
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1c1c1c;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 15px 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
 
+.logo-fixed {
+  position: fixed;
+  top: 55px; /* justo debajo de la barra */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
+.logo-fixed img {
+  width: 150px;
+  height: auto;
+}
+
+
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #d4af37;
+    }
+
+    header {
+      margin-top: 90px;
+      text-align: center;
+    }
+
+    header img {
+      width: 150px;
+      border-radius: 10px;
+    }
+
+    header h1 {
+      font-size: 40px;
+      color: #d4af37;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    }
+
+    .card {
+      margin: 40px auto;
+      max-width: 900px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      color: #1c1c1c;
+      border-left: 5px solid #d4af37;
+      padding-left: 10px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    /* Scroll reveal variantes */
+    .reveal {
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+
+    .reveal.right {
+      transform: translateX(100px);
+    }
+
+    .reveal.left {
+      transform: translateX(-100px);
+    }
+
+    .reveal.top {
+      transform: translateY(-100px);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #1c1c1c;
+      color: #fff;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
 
