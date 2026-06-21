@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presocráticos</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Georgia', serif;
-      background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
-      color: #2c2c2c;
-      line-height: 1.6;
-      padding: 0 40px;
-    }
+  body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
+  color: #2c2c2c;
+  line-height: 1.6;
+  padding: 0;              /* quita el padding lateral fijo */
+  overflow-x: hidden;      /* elimina hueco lateral */
+}
+
 
     .navbar {
   position: fixed;
@@ -71,25 +73,46 @@
       text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     }
 
-    .card {
-      margin: 40px auto;
-      max-width: 900px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
+   .card {
+  margin: 20px auto;
+  max-width: 900px;
+  width: 100%;             /* que se adapte al ancho */
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
 
-    h1 {
-      color: #1c1c1c;
-      border-left: 5px solid #d4af37;
-      padding-left: 10px;
-      margin-bottom: 15px;
-    }
+h1 {
+  color: #1c1c1c;
+  border-left: 5px solid #d4af37;
+  padding-left: 10px;
+  margin-bottom: 15px;
+  font-size: clamp(20px, 5vw, 32px); /* dinámico */
+}
 
-    p {
-      margin-bottom: 20px;
-    }
+p {
+  margin-bottom: 20px;
+  font-size: clamp(14px, 3.5vw, 18px); /* dinámico */
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .navbar a {
+    font-size: 14px;
+  }
+  header h1 {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+  .card {
+    width: 95%;        /* ocupa casi todo el ancho en móvil */
+    padding: 15px;     /* menos padding */
+  }
+}
+
 
     /* Scroll reveal variantes */
     .reveal {
