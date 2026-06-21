@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presocráticos</title>
   <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
     body {
       margin: 0;
       font-family: 'Georgia', serif;
@@ -12,6 +17,7 @@
       color: #2c2c2c;
       line-height: 1.6;
       padding: 0 40px;
+       overflow-x: hidden; /* evita hueco lateral */
     }
 
     .navbar {
@@ -72,8 +78,9 @@
     }
 
     .card {
-      margin: 40px auto;
-      max-width: 900px;
+  margin: 20px auto;
+  max-width: 900px;
+  width: 100%; /* que se adapte al ancho */
       background: #fff;
       padding: 30px;
       border-radius: 10px;
@@ -121,6 +128,28 @@
       color: #fff;
       margin-top: 40px;
     }
+
+    @media (max-width: 768px) {
+  .navbar a {
+    font-size: 14px; /* más pequeño en móvil */
+  }
+  body {
+    padding: 0 10px; /* aún menos en móvil */
+  }
+  header h1 {
+    font-size: 24px;
+  }
+  h1 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 14px;
+  }
+  .card {
+    padding: 15px; /* menos padding en móvil */
+    width: 95%; /* casi todo el ancho en móvil */
+  }
+}
   </style>
 </head>
 <body>
