@@ -5,35 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presocráticos</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ── RESET TOTAL: evita el doble scroll horizontal ── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;   /* 🔧 elimina scroll lateral */
-      overflow-y: auto;     /* 🔧 solo scroll vertical */
+    html {
+      /* Bloquea el scroll horizontal en toda la página */
+      overflow-x: hidden;
+      /* Ancho máximo real de la pantalla, sin que nada lo expanda */
+      max-width: 100vw;
+    }
+
+    body {
+      margin: 0;
       font-family: 'Georgia', serif;
-      background: #e3bb4c url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      background: #f4f1e9 url('https://www.transparenttextures.com/patterns/aged-paper.png');
       color: #2c2c2c;
       line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
       padding: 0 16px;
+      /* Igual que html: corta cualquier elemento que se salga */
+      overflow-x: hidden;
+      max-width: 100vw;
+      /* Evita que el padding sume ancho extra */
+      width: 100%;
     }
 
+    /* ── NAVBAR ── */
     .navbar {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 60px;
+      top: 0;
+      left: 0;
+      /* 
+        El problema clásico de navbar desajustada:
+        width:100% en un elemento fixed se calcula desde el borde
+        izquierdo de la pantalla, pero si el body tiene padding o
+        hay un scrollbar, puede correrse. La solución es usar
+        100vw + left:0 + right:0 en lugar de solo width:100%.
+      */
+      width: 100vw;
+      right: 0;
       background: #1c1c1c;
       color: #fff;
       display: flex;
       justify-content: center;
-      gap: 30px;
-      padding: 15px 0;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 12px;
       z-index: 1000;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
@@ -42,37 +60,62 @@
       color: #fff;
       text-decoration: none;
       font-weight: bold;
-      font-size: 18px;
+      font-size: 14px;
       transition: color 0.3s;
-    }
-    .navbar a:hover { color: #d4af37; }
-
-    main {
-      padding-top: 80px; /* 🔧 reserva espacio bajo el nav */
+      white-space: nowrap;
     }
 
+    .navbar a:hover {
+      color: #d4af37;
+    }
+
+    /* ── LOGO FIJO ── */
+    .logo-fixed {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .logo-fixed img {
+      width: 80px;
+      height: auto;
+    }
+
+    /* ── HEADER ── */
     header {
+      margin-top: 140px;
       text-align: center;
-      margin-bottom: 20px;
     }
+
     header img {
-      width: 150px;
+      width: 120px;
       border-radius: 10px;
-      display: block;
-      margin: 0 auto 10px;
+      max-width: 100%;
     }
+
     header h1 {
-      font-size: clamp(28px, 6vw, 40px);
+      font-size: clamp(24px, 6vw, 40px);
       color: #d4af37;
       text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     }
 
+    /* ── CARDS ── */
     .card {
+      margin: 24px auto;
+      max-width: 900px;
+      width: 100%;
       background: #fff;
-      padding: 30px;
+      padding: 20px 16px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      width: 100%;
+    }
+
+    .card:first-of-type {
+      margin-top: 140px;
     }
 
     h1 {
@@ -80,52 +123,125 @@
       border-left: 5px solid #d4af37;
       padding-left: 10px;
       margin-bottom: 15px;
-      font-size: clamp(20px, 5vw, 32px);
-    }
-    p {
-      margin-bottom: 20px;
-      font-size: clamp(14px, 3.5vw, 18px);
+      font-size: clamp(18px, 4vw, 28px);
     }
 
-    video, img {
-      max-width: 100%; /* 🔧 nunca exceden el ancho */
-      height: auto;
+    p {
+      margin-bottom: 20px;
+      font-size: clamp(14px, 3.5vw, 16px);
+    }
+
+    /* ── VIDEO ── */
+    video {
+      width: 100%;
+      border-radius: 10px;
       display: block;
     }
 
-    /* Grid responsivo */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    @media (max-width: 768px) {
-      .grid { grid-template-columns: 1fr; }
-      .navbar { flex-wrap: wrap; gap: 15px; }
-      .navbar a { font-size: 14px; }
-      header h1 { font-size: clamp(22px, 6vw, 28px); }
-      .card { padding: 15px; }
-      .container { padding: 0 8px; }
+    /* ── SCROLL REVEAL ── 
+       IMPORTANTE: las animaciones .right y .left usaban translateX
+       con valores grandes que hacían que el elemento "saliera" del
+       viewport y generaban el scroll horizontal. Se reemplaza con
+       clip-path o se reduce el desplazamiento y se agrega
+       overflow:hidden al contenedor para que no desborde.
+    */
+    .reveal {
+      opacity: 0;
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
-    /* Scroll reveal */
-    .reveal { opacity: 0; transition: all 0.8s ease; }
-    .reveal.right { transform: translateX(100px); }
-    .reveal.left  { transform: translateX(-100px); }
-    .reveal.top   { transform: translateY(-100px); }
-    .reveal.active { opacity: 1; transform: translateX(0) translateY(0); }
+    .reveal.right {
+      /* Reducido de 60px a 20px para que no salga del viewport */
+      transform: translateX(20px);
+    }
 
+    .reveal.left {
+      transform: translateX(-20px);
+    }
+
+    .reveal.top {
+      transform: translateY(-20px);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    /* ── FOOTER ── */
     footer {
       text-align: center;
-      padding: 20px;
+      padding: 20px 16px;
       background: #1c1c1c;
       color: #fff;
       margin-top: 40px;
+      font-size: 14px;
+    }
+
+    /* Tablets y pantallas medianas */
+    @media (min-width: 600px) {
+      body {
+        padding: 0 24px;
+      }
+
+      .navbar {
+        gap: 20px;
+        padding: 12px 20px;
+      }
+
+      .navbar a {
+        font-size: 16px;
+      }
+
+      .logo-fixed img {
+        width: 110px;
+      }
+
+      .card {
+        padding: 24px 28px;
+      }
+    }
+
+    /* Escritorio */
+    @media (min-width: 900px) {
+      body {
+        padding: 0 40px;
+      }
+
+      .navbar {
+        gap: 30px;
+        padding: 15px 0;
+      }
+
+      .navbar a {
+        font-size: 18px;
+      }
+
+      .logo-fixed {
+        top: 55px;
+      }
+
+      .logo-fixed img {
+        width: 150px;
+      }
+
+      header {
+        margin-top: 90px;
+      }
+
+      .card {
+        padding: 30px;
+      }
+
+      .card:first-of-type {
+        margin-top: 24px;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- Barra de navegación fija -->
   <nav class="navbar">
     <a href="indice/indice.html">Indice</a>
     <a href="palabras/palabras.html">Palabras</a>
@@ -133,49 +249,53 @@
     <a href="reflexiones/reflexiones.html">Reflexiones</a>
   </nav>
 
-  <main class="container">
-    <header>
-      <img src="gif.gif" alt="Decoración animada">
-      <h1>Presocráticos</h1>
-    </header>
+  <!-- Imagen fija debajo de la barra -->
+  <div class="logo-fixed">
+    <img src="gif.gif" alt="Decoración animada">
+  </div>
 
-    <div class="card">
-      <video src="video.mp4" autoplay muted loop playsinline style="border-radius:10px;">
-        Tu navegador no soporta la etiqueta de video.
-      </video>
-    </div>
+  <!-- Video principal -->
+  <div class="card" style="margin-top: 140px;">
+    <video src="video.mp4" autoplay muted loop playsinline>
+      Tu navegador no soporta la etiqueta de video.
+    </video>
+  </div>
 
-    <section class="grid">
-      <div class="card reveal right">
-        <h1>Los tres filósofos de Mileto</h1>
-      </div>
+  <!-- Cajitas individuales -->
+  <div class="card reveal right">
+    <h1>Los tres filósofos de Mileto</h1>
+  </div>
 
-      <div class="card reveal left">
-        <h1>Tales de Mileto</h1>
-        <p>Este filósofo planteaba la premisa de que todo origen de la vida proviene del agua...</p>
-      </div>
+  <div class="card reveal left">
+    <h1>Tales de Mileto</h1>
+    <p>Este filósofo planteaba la premisa de que todo origen de la vida proviene del agua, así como sus cambios: hielo, líquido, gaseoso.</p>
+  </div>
 
-      <div class="card reveal top">
-        <h1>Anaximandro</h1>
-        <p>Planteó la idea de que nuestro planeta no es el único existente...</p>
-      </div>
+  <div class="card reveal top">
+    <h1>Anaximandro</h1>
+    <p>Planteó la idea de que nuestro planeta no es el único existente y pensaba que este derivaba de lo "indefinido". Lo indefinido puede ser todo aquello que está creado del todo; este filósofo creía que toda la vida o elementos derivan de uno, al cual llamaron lo indefinido.</p>
+  </div>
 
-      <div class="card reveal right">
-        <h1>Anaxímenes</h1>
-        <p>Planteaba la idea de que para que surgiera la vida tendría que haber tierra, aire, fuego y agua...</p>
-      </div>
+  <div class="card reveal right">
+    <h1>El problema del cambio</h1>
+    <p>Este problema fue lo que buscaban resolver los filósofos de Mileto: aquello que puede cambiar o alterar para convertirse en algo.</p>
+  </div>
 
-      <div class="card reveal left">
-        <h1>Parménides</h1>
-        <p>Pensaba que los sentidos nos ofrecen una imagen errónea del mundo...</p>
-      </div>
+  <div class="card reveal left">
+    <h1>Anaxímenes</h1>
+    <p>Planteaba la idea de que para que surgiera la vida tendría que haber tierra, aire, fuego y agua, pero su punto central era la niebla, es decir, aire condensado.</p>
+  </div>
 
-      <div class="card reveal top">
-        <h1>Heráclito</h1>
-        <p>Este filósofo decía "todo fluye" confiando en sus sentidos...</p>
-      </div>
-    </section>
-  </main>
+  <div class="card reveal top">
+    <h1>Parménides</h1>
+    <p>Pensaba que los sentidos nos ofrecen una imagen errónea del mundo. Este filósofo se dedicó a descubrir toda clase de ilusión; no se fiaba de sus sentidos, sino de su razón. También pensaba que ningún cambio era posible, sino que este era una ilusión de nuestra percepción de los objetos. Mencionaba que todo lo que está en el mundo es eterno y que las cosas no tienen un cambio real, sino que estas son meramente ilusiones.</p>
+  </div>
+
+  <div class="card reveal right">
+    <h1>Heráclito</h1>
+    <p>Lo contrario a Parménides: este filósofo decía "todo fluye", confiando en sus sentidos, porque según él todo es cambiante en el mundo. Lo explica con la siguiente metáfora: una persona no se puede aventar a un río dos veces porque el río y él ya no son los mismos. Al contrario de Parménides, decía que nada dura eternamente, sino que todo está en constante movimiento y se transforma. También pensaba que el bien y el mal son necesarios para la existencia del todo: si no nos enfermáramos no sabríamos qué es estar sanos, si no hubiera guerra no sabríamos valorar la paz.</p>
+    <p>Según Heráclito, dios está en el día y en la noche; dios es algo universal, lo es todo y está en la naturaleza y en sus constantes cambios. Cabe mencionar que este hombre tenía una percepción de dios diferente a la de hoy en día, pues lo veía más como una fuerza que está en todas partes, no como una divinidad individual. Decía que tenía que haber una "razón universal" que dirige todo lo que sucede en la naturaleza. No obstante, no se refería a ella con la palabra dios, sino que la llamaba <em>logos</em>, que significa razón. Fomentaba la idea de que todos tenían que guiarse por una razón universal, objetiva, fiable y asertiva, dejando de lado la forma subjetiva de actuar.</p>
+  </div>
 
   <footer>
     <p>&copy; 2026 Filosofía Presocrática</p>
@@ -183,19 +303,21 @@
 
   <script>
     const reveals = document.querySelectorAll(".reveal");
+
     function revealOnScroll() {
       for (let i = 0; i < reveals.length; i++) {
         let windowHeight = window.innerHeight;
         let elementTop = reveals[i].getBoundingClientRect().top;
-        let elementVisible = 150;
-        if (elementTop < windowHeight - elementVisible) {
+        if (elementTop < windowHeight - 150) {
           reveals[i].classList.add("active");
         } else {
           reveals[i].classList.remove("active");
         }
       }
     }
+
     window.addEventListener("scroll", revealOnScroll);
+    revealOnScroll();
   </script>
 </body>
 </html>
