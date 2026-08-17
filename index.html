@@ -94,13 +94,6 @@
 
     .logo-text { font-size: 32px; letter-spacing: -0.02em; }
 
-    .logo-badge {
-      font-size: 10px; font-weight: 700;
-      background: var(--pink); color: white;
-      padding: 4px 8px; border: 2px solid var(--black);
-      transform: rotate(2deg);
-    }
-
     .cart-btn {
       position: relative;
       border: 3px solid var(--black);
@@ -533,6 +526,36 @@
     @media (max-width: 767px) {
       .cart-btn-label { display: none; }
     }
+
+    /* Barra de navegación más compacta en celulares */
+    @media (max-width: 480px) {
+      .header-bar {
+        height: 52px;
+        padding: 0 12px;
+      }
+      .logo { gap: 8px; }
+      .logo-mark {
+        width: 28px; height: 28px;
+        font-size: 14px;
+        border-width: 2px;
+      }
+      .logo-text {
+        font-size: 20px;
+      }
+      .cart-btn {
+        border-width: 2px;
+        box-shadow: 3px 3px 0 var(--black);
+        font-size: 12px;
+        padding: 6px 10px;
+        gap: 4px;
+      }
+      .cart-count {
+        min-width: 18px; height: 18px;
+        font-size: 10px;
+      }
+      .marquee-wrap { height: 24px; }
+      .marquee-item { font-size: 12px; padding-right: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -543,7 +566,6 @@
       <div class="logo">
         <div class="logo-mark">M</div>
         <span class="logo-text bebas">MINI.MOVIL</span>
-        <span class="logo-badge">HECHO EN MÉXICO*</span>
       </div>
       <button id="cart-toggle-btn" class="cart-btn">
         🛍 <span class="cart-btn-label">CARRITO</span>
