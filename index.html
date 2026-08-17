@@ -161,7 +161,7 @@
 
     .hero-title {
       line-height: 0.85;
-      font-size: 96px;
+      font-size: clamp(40px, 12vw, 96px);
       letter-spacing: -0.04em;
     }
     .hero-pero { color: var(--pink); position: relative; display: inline-block; }
@@ -302,7 +302,7 @@
        --------------------------------------------------------- */
     .catalog { max-width: 1400px; margin: 0 auto; padding: 40px 24px 32px; }
     .catalog-heading { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .catalog-heading h2 { font-size: 56px; line-height: 0.9; margin: 0; }
+    .catalog-heading h2 { font-size: clamp(30px, 9vw, 56px); line-height: 0.9; margin: 0; }
     .hint-badge { font-size: 11px; font-weight: 900; background: var(--black); color: white; padding: 4px 8px; display: inline-block; }
     .hint-text { font-size: 12px; margin-top: 4px; max-width: 200px; }
 
@@ -335,7 +335,7 @@
     .product-visual-grid > div.dark { background: var(--black); }
     .product-color-name { position: absolute; bottom: 8px; right: 8px; background: white; border: 2px solid var(--black); padding: 2px 8px; font-size: 9px; font-weight: 900; }
 
-    .product-name { font-size: 30px; line-height: 1; margin: 16px 0 0; }
+    .product-name { font-size: clamp(22px, 6vw, 30px); line-height: 1; margin: 16px 0 0; }
     .product-badges { display: flex; gap: 8px; margin-top: 4px; }
     .badge { font-size: 10px; font-weight: 900; border: 2px solid var(--black); padding: 0 6px; }
     .badge-yellow { background: var(--yellow); }
@@ -364,7 +364,7 @@
     .compare-section { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; }
     .compare-box { border: 4px solid var(--black); box-shadow: 8px 8px 0 var(--black); background: var(--pink); padding: 24px; }
     .compare-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-    .compare-title { color: white; font-size: 48px; line-height: 1; text-shadow: 3px 3px 0 var(--black); margin: 0; }
+    .compare-title { color: white; font-size: clamp(28px, 8vw, 48px); line-height: 1; text-shadow: 3px 3px 0 var(--black); margin: 0; }
     .btn-clear {
       background: white; border: 3px solid var(--black); padding: 6px 12px;
       font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 4px; cursor: pointer;
@@ -387,7 +387,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 10px; font-weight: 900; text-align: center; color: rgba(0,0,0,0.7);
     }
-    .compare-info-name { font-size: 24px; }
+    .compare-info-name { font-size: clamp(16px, 5vw, 24px); }
     .compare-info-meta { font-size: 12px; font-weight: 700; }
     .compare-info-specs { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
     .compare-info-specs span { font-size: 10px; background: white; border: 2px solid var(--black); padding: 2px 6px; font-weight: 700; }
@@ -412,7 +412,7 @@
     .reviews-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 24px; }
 
     .rating-box { border: 4px solid var(--black); box-shadow: 8px 8px 0 var(--black); background: var(--yellow); padding: 24px; }
-    .rating-box h3 { font-size: 40px; line-height: 0.9; margin: 0; }
+    .rating-box h3 { font-size: clamp(26px, 8vw, 40px); line-height: 0.9; margin: 0; }
     .rating-card { margin-top: 16px; background: white; border: 3px solid var(--black); padding: 12px; }
     .rating-label { font-size: 11px; font-weight: 900; }
     .stars { display: flex; gap: 4px; margin-top: 8px; }
@@ -444,7 +444,7 @@
        --------------------------------------------------------- */
     .site-footer { background: var(--black); color: white; border-top: 6px solid var(--yellow); }
     .footer-grid { max-width: 1400px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
-    .footer-title { font-size: 56px; line-height: 0.85; }
+    .footer-title { font-size: clamp(30px, 9vw, 56px); line-height: 0.85; }
     .footer-text { margin-top: 12px; font-size: 14px; max-width: 420px; color: rgba(255,255,255,0.8); }
 
     .newsletter-form {
@@ -512,9 +512,8 @@
        RESPONSIVE — pantallas chicas
        --------------------------------------------------------- */
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero-title { font-size: 72px; }
-      .hero-right { height: 420px; }
+      .hero { grid-template-columns: 1fr; padding: 40px 20px 32px; }
+      .hero-right { height: 380px; }
       .reviews-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .compare-grid { grid-template-columns: 1fr; }
@@ -555,6 +554,77 @@
       }
       .marquee-wrap { height: 24px; }
       .marquee-item { font-size: 12px; padding-right: 20px; }
+    }
+
+    /* ---------------------------------------------------------
+       RESPONSIVE 100% MÓVIL — reorganiza todas las secciones
+       --------------------------------------------------------- */
+    @media (max-width: 600px) {
+      /* Paddings generales más chicos para que nada se apriete */
+      .hero,
+      .filters-wrap,
+      .catalog,
+      .compare-section,
+      .reviews,
+      .footer-grid {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* HERO */
+      .hero { padding-top: 32px; padding-bottom: 24px; gap: 16px; }
+      .hero-text { font-size: 16px; }
+      .hero-actions { gap: 8px; }
+      .btn-primary { padding: 10px 18px; font-size: 13px; }
+      .hero-social-proof { font-size: 11px; padding: 6px 10px; }
+
+      /* Ilustración del teléfono: se achica para no ocupar media pantalla */
+      .hero-right { height: 260px; }
+      .blob-yellow { width: 240px; height: 240px; }
+      .blob-pink { width: 200px; height: 200px; transform: rotate(-6deg) translate(14px, 14px); }
+      .phone-frame { width: 130px; }
+      .phone-inner { height: 230px; }
+      .screen-clock { font-size: 28px; }
+      .sticker { font-size: 8px; padding: 3px 6px; }
+
+      /* FILTROS */
+      .filters-bar { padding: 12px; gap: 10px; }
+      .filter-label { font-size: 11px; }
+      .filter-chip { font-size: 11px; padding: 5px 10px; }
+
+      /* CATÁLOGO */
+      .catalog { padding-top: 28px; padding-bottom: 24px; }
+      .catalog-grid { grid-template-columns: 1fr; gap: 16px; }
+      .hint-text { max-width: none; }
+      .product-visual { height: 160px; }
+      .product-visual-circle { width: 120px; height: 120px; }
+      .product-visual-phone { width: 76px; height: 130px; }
+      .product-price { font-size: 22px; }
+
+      /* COMPARADOR */
+      .compare-section { padding-bottom: 28px; }
+      .compare-box { padding: 16px; }
+      .compare-filled { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .compare-phone-swatch { width: 56px; height: 90px; font-size: 9px; }
+      .compare-info-verdict { font-size: 15px; }
+
+      /* RESEÑAS */
+      .reviews { padding-bottom: 32px; }
+      .rating-box { padding: 16px; }
+      .star-btn { width: 34px; height: 34px; font-size: 17px; }
+      .review-card { padding: 12px; gap: 10px; }
+
+      /* FOOTER / NEWSLETTER */
+      .footer-grid { padding-top: 28px; padding-bottom: 28px; gap: 20px; }
+      .footer-text { font-size: 13px; }
+      .newsletter-form { flex-wrap: wrap; }
+      .newsletter-form input { min-width: 0; width: 100%; }
+      .newsletter-form button { width: 100%; justify-content: center; }
+      .footer-meta { flex-wrap: wrap; }
+
+      /* CARRITO FLOTANTE */
+      .cart-panel { width: 320px; padding: 12px; right: 12px; bottom: 12px; }
+      .cart-total-amount { font-size: 18px; }
     }
   </style>
 </head>
