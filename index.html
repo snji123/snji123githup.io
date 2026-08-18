@@ -689,6 +689,43 @@
       .cart-panel { width: 320px; padding: 12px; right: 12px; bottom: 12px; }
       .cart-total-amount { font-size: 18px; }
     }
+    /* ---------------------------------------------------------
+       ANIMACIONES DE APARICIÓN AL HACER SCROLL
+       --------------------------------------------------------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s cubic-bezier(0.16, 0.84, 0.44, 1),
+                  transform 0.8s cubic-bezier(0.16, 0.84, 0.44, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Variantes de retardo para efecto escalonado (cascada) */
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+    .reveal-d4 { transition-delay: 0.32s; }
+    .reveal-d5 { transition-delay: 0.40s; }
+
+    /* Variante para texto: aparece con un pelín menos de recorrido */
+    .reveal-text {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .reveal-text.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* Respeta a quienes prefieren menos movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-text {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -718,20 +755,20 @@
   <!-- ===================== HERO ===================== -->
   <section class="hero">
     <div class="hero-left">
-      <div class="hero-pill">✨ NUEVA COLECCIÓN 2025 — 6 MODELOS</div>
+      <div class="hero-pill reveal">✨ NUEVA COLECCIÓN 2025 — 6 MODELOS</div>
       <h1 class="hero-title bebas">
-        <span class="block">MINI</span>
-        <span class="block hero-pero">
+        <span class="block reveal reveal-d1">MINI</span>
+        <span class="block hero-pero reveal reveal-d2">
           PERO
           <span class="hero-wow">¡WOW!</span>
         </span>
-        <span class="block">PODEROSO</span>
+        <span class="block reveal reveal-d3">PODEROSO</span>
       </h1>
-      <p class="hero-text">
+      <p class="hero-text reveal-text reveal-d3">
         Celulares que caben en una caja de chicles. Con batería real, cámara real
         y cara de juguete premium. Para llevar menos y vivir más.
       </p>
-      <div class="hero-actions">
+      <div class="hero-actions reveal reveal-d4">
         <button class="btn-primary" id="ver-catalogo-btn">VER CATÁLOGO ↗</button>
         <div class="hero-social-proof">
           <div class="avatar-stack">
@@ -744,7 +781,7 @@
       </div>
     </div>
 
-    <div class="hero-right">
+    <div class="hero-right reveal reveal-d2">
       <div class="blob blob-yellow"></div>
       <div class="blob blob-pink"></div>
       <div class="phone-mock" id="phone-mock">
@@ -785,7 +822,7 @@
 
   <!-- ===================== FILTROS ===================== -->
   <section class="filters-wrap">
-    <div class="filters-bar">
+    <div class="filters-bar reveal">
       <div class="filter-label">↕ TAMAÑO:</div>
       <div class="filter-group" id="filter-size" data-filter="size">
         <button class="filter-chip active" data-value="todos">TODOS</button>
@@ -818,7 +855,7 @@
 
   <!-- ===================== CATÁLOGO ===================== -->
   <section class="catalog" id="catalogo">
-    <div class="catalog-heading">
+    <div class="catalog-heading reveal">
       <h2 class="bebas">
         CATÁLOGO<br>
         <span class="pink">MINI</span> (<span id="catalog-count">6</span>)
@@ -836,7 +873,7 @@
 
   <!-- ===================== COMPARADOR ===================== -->
   <section class="compare-section">
-    <div class="compare-box">
+    <div class="compare-box reveal">
       <div class="compare-header">
         <h2 class="bebas compare-title">VS — COMPARADOR</h2>
         <button class="btn-clear" id="clear-compare-btn">🗑 LIMPIAR</button>
@@ -875,7 +912,7 @@
   <!-- ===================== RESEÑAS ===================== -->
   <section class="reviews">
     <div class="reviews-grid">
-      <div class="rating-box">
+      <div class="rating-box reveal">
         <h3 class="bebas">LA BANDA<br>OPINA</h3>
         <div class="rating-card">
           <div class="rating-label">TU CALIFICACIÓN</div>
@@ -903,7 +940,7 @@
   <!-- ===================== FOOTER / NEWSLETTER ===================== -->
   <footer class="site-footer">
     <div class="footer-grid">
-      <div>
+      <div class="reveal">
         <div class="bebas footer-title">
           ¿QUIERES<br><span class="yellow">SER MINI?</span>
         </div>
@@ -913,7 +950,7 @@
         </p>
       </div>
 
-      <div class="newsletter">
+      <div class="newsletter reveal reveal-d1">
         <form id="newsletter-form" class="newsletter-form">
           <input id="newsletter-email" type="email" placeholder="tu email @ mini" required>
           <button type="submit">ENVIAR ❤</button>
@@ -1347,7 +1384,7 @@
     function renderCatalog() {
       const products = getFilteredProducts();
       el.catalogCount.textContent = products.length;
-      el.catalogGrid.innerHTML = products.map(productCardHTML).join("");
+      el.catalogGrid.innerHTML = products.map((p, i) => productCardHTML(p, i)).join("");
 
       // Volvemos a enganchar los eventos porque el HTML se regeneró
       el.catalogGrid.querySelectorAll(".product-card").forEach((card) => {
@@ -1356,11 +1393,14 @@
 
         card.querySelector(".add-to-cart-btn").addEventListener("click", () => addToCart(product));
       });
+
+      observeReveals(el.catalogGrid);
     }
 
-    function productCardHTML(p) {
+    function productCardHTML(p, index = 0) {
+      const delay = (index % 6) * 0.06;
       return `
-        <div class="product-card" data-id="${p.id}">
+        <div class="product-card reveal" style="transition-delay:${delay}s" data-id="${p.id}">
           <div class="product-card-top">
             <span class="product-tag">${p.tag}</span>
           </div>
@@ -1662,8 +1702,8 @@
 
     function renderReviews() {
       el.reviewsList.innerHTML = TESTIMONIALS.map(
-        (t) => `
-        <div class="review-card">
+        (t, i) => `
+        <div class="review-card reveal" style="transition-delay:${(i % 6) * 0.08}s">
           <div class="review-avatar">${t.name[0]}</div>
           <div class="review-body">
             <div class="review-head">
@@ -1676,6 +1716,8 @@
         </div>
       `
       ).join("");
+
+      observeReveals(el.reviewsList);
     }
 
     const starButtons = [...el.ratingStars.querySelectorAll(".star-btn")];
@@ -1737,12 +1779,32 @@
     });
 
     // ==================================================================
+    // 7) ANIMACIONES DE APARICIÓN AL HACER SCROLL
+    // ==================================================================
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    function observeReveals(scope = document) {
+      scope.querySelectorAll(".reveal:not(.is-visible), .reveal-text:not(.is-visible)").forEach((elToWatch) => {
+        revealObserver.observe(elToWatch);
+      });
+    }
+
+    // ==================================================================
     // ARRANQUE
     // ==================================================================
     renderCatalog();
     renderCart();
     renderCompare();
     renderReviews();
+    observeReveals(); // engancha todo lo que ya está en el HTML estático (hero, filtros, footer, etc.)
   </script>
 </body>
 </html>
