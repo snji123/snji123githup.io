@@ -377,9 +377,16 @@
       position: relative; transition: all 0.15s;
     }
     .compare-slot.filled { display: block; }
-    .compare-empty { text-align: center; opacity: 0.7; }
-    .compare-empty .bebas { font-size: 22px; }
-    .compare-empty-text { font-size: 11px; font-weight: 700; }
+    .compare-empty { text-align: center; }
+    .compare-empty .bebas { font-size: 22px; opacity: 0.7; margin-bottom: 10px; }
+    .compare-select-btn {
+      font-family: inherit; font-weight: 900; font-size: 13px;
+      background: var(--yellow); color: var(--black);
+      border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black);
+      padding: 10px 18px; cursor: pointer; transition: transform 0.1s;
+    }
+    .compare-select-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
+    .compare-select-btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 var(--black); }
 
     .compare-filled { display: flex; gap: 16px; align-items: center; }
     .compare-phone-swatch {
@@ -399,11 +406,64 @@
     }
 
     .compare-verdict {
-      margin-top: 16px; background: var(--black); color: var(--yellow);
-      border: 3px solid var(--black); padding: 12px;
-      display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; font-weight: 900;
+      margin-top: 16px; background: transparent; border: none; padding: 0;
+      display: block;
     }
-    .verdict-pill { background: var(--yellow); color: var(--black); padding: 0 8px; }
+    .compare-overall-winner {
+      background: var(--yellow); border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black);
+      padding: 10px 14px; font-weight: 900; font-size: 14px; text-align: center; margin-bottom: 12px;
+    }
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; background: white;
+      border: 3px solid var(--black);
+    }
+    .compare-table th, .compare-table td {
+      border: 2px solid var(--black); padding: 8px 6px; text-align: center;
+    }
+    .compare-table thead th {
+      background: var(--black); color: white; font-weight: 900; font-size: 11px;
+    }
+    .compare-table .compare-table-label {
+      text-align: left; font-weight: 900; background: var(--bg); font-size: 10px; white-space: nowrap;
+    }
+    .compare-table td.win { background: var(--yellow); font-weight: 900; }
+
+    /* ---------------------------------------------------------
+       SELECTOR DE EQUIPO (modal para el comparador)
+       --------------------------------------------------------- */
+    .compare-picker-overlay {
+      position: fixed; inset: 0; background: rgba(10,10,10,0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 60; padding: 20px;
+    }
+    .compare-picker-overlay[hidden] { display: none; }
+    .compare-picker-box {
+      background: var(--bg); width: 100%; max-width: 420px;
+      max-height: 80vh; display: flex; flex-direction: column;
+      box-shadow: 8px 8px 0 var(--black);
+    }
+    .compare-picker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; border-bottom: 4px solid var(--black); background: var(--pink);
+    }
+    .compare-picker-title { color: white; font-size: 24px; text-shadow: 2px 2px 0 var(--black); }
+    .compare-picker-close {
+      width: 28px; height: 28px; background: var(--black); color: white;
+      border: 2px solid var(--black); font-weight: 900; cursor: pointer;
+    }
+    .compare-picker-list { overflow-y: auto; padding: 8px; }
+    .compare-picker-item {
+      width: 100%; display: flex; align-items: center; gap: 12px;
+      background: white; border: 3px solid var(--black); margin-bottom: 8px;
+      padding: 8px 10px; cursor: pointer; font-family: inherit; text-align: left;
+      transition: transform 0.1s;
+    }
+    .compare-picker-item:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--black); }
+    .compare-picker-swatch {
+      width: 34px; height: 34px; border-radius: 8px; border: 2px solid var(--black); flex-shrink: 0;
+    }
+    .compare-picker-item-name { font-weight: 900; font-size: 14px; line-height: 1.1; }
+    .compare-picker-item-meta { font-size: 11px; font-weight: 700; opacity: 0.7; }
 
     /* ---------------------------------------------------------
        RESEÑAS
@@ -606,7 +666,10 @@
       .compare-box { padding: 16px; }
       .compare-filled { flex-direction: column; align-items: flex-start; gap: 10px; }
       .compare-phone-swatch { width: 56px; height: 90px; font-size: 9px; }
-      .compare-info-verdict { font-size: 15px; }
+      .compare-table { font-size: 10px; }
+      .compare-table th, .compare-table td { padding: 5px 3px; }
+      .compare-table-label { font-size: 8px; }
+      .compare-overall-winner { font-size: 12px; }
 
       /* RESEÑAS */
       .reviews { padding-bottom: 32px; }
@@ -782,14 +845,14 @@
       <div class="compare-grid">
         <div class="compare-slot" id="compare-slot-0" data-slot="0">
           <div class="compare-empty">
-            <div class="bebas">SUELTA AQUÍ CEL 1</div>
-            <div class="compare-empty-text">Arrastra desde el catálogo</div>
+            <div class="bebas">CEL 1</div>
+            <button class="compare-select-btn" type="button" data-slot="0">SELECCIONAR ▾</button>
           </div>
         </div>
         <div class="compare-slot" id="compare-slot-1" data-slot="1">
           <div class="compare-empty">
-            <div class="bebas">SUELTA AQUÍ CEL 2</div>
-            <div class="compare-empty-text">Arrastra desde el catálogo</div>
+            <div class="bebas">CEL 2</div>
+            <button class="compare-select-btn" type="button" data-slot="1">SELECCIONAR ▾</button>
           </div>
         </div>
       </div>
@@ -797,6 +860,17 @@
       <div id="compare-verdict" class="compare-verdict" hidden></div>
     </div>
   </section>
+
+  <!-- ===================== SELECTOR DE EQUIPO PARA COMPARADOR ===================== -->
+  <div id="compare-picker-overlay" class="compare-picker-overlay" hidden>
+    <div class="compare-picker-box brutal">
+      <div class="compare-picker-header">
+        <div class="bebas compare-picker-title">ELIGE UN EQUIPO</div>
+        <button class="compare-picker-close" id="compare-picker-close" type="button">✕</button>
+      </div>
+      <div id="compare-picker-list" class="compare-picker-list"></div>
+    </div>
+  </div>
 
   <!-- ===================== RESEÑAS ===================== -->
   <section class="reviews">
@@ -897,6 +971,12 @@
         battery: "2 días",
         specs: ["Exynos 1680 · 8GB + 256GB", "6.7\" Super AMOLED Plus 120Hz", "Cám. 50+12+5MP · IP68"],
         tag: "TOP GAMA",
+        rank: 1,
+        processor: "Exynos 1680",
+        ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED Plus", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
+        resistance: "IP68", charge: "—",
       },
       {
         id: "a57-gris",
@@ -909,6 +989,12 @@
         battery: "2 días",
         specs: ["Exynos 1680 · 8GB + 256GB", "6.7\" Super AMOLED Plus 120Hz", "Cám. 50+12+5MP · IP68"],
         tag: "TOP GAMA",
+        rank: 1,
+        processor: "Exynos 1680",
+        ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED Plus", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
+        resistance: "IP68", charge: "—",
       },
       {
         id: "a26-verde",
@@ -921,6 +1007,30 @@
         battery: "2 días",
         specs: ["Exynos 1280 · 6GB + 128GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+2MP · IP67"],
         tag: "BEST SELLER",
+        rank: 5,
+        processor: "Exynos 1280",
+        ram: 6, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+8+2MP", front: 13,
+        resistance: "IP67", charge: "—",
+      },
+      {
+        id: "a26-base",
+        name: "GALAXY A26 5G",
+        price: 5999,
+        color: "gris",
+        colorName: "ESTÁNDAR",
+        hex: "#8E8E93",
+        size: "ultra",
+        battery: "2 días",
+        specs: ["Exynos 1280 · 6GB + 128GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+2MP · IP67"],
+        tag: "BEST SELLER",
+        rank: 5,
+        processor: "Exynos 1280",
+        ram: 6, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+8+2MP", front: 13,
+        resistance: "IP67", charge: "—",
       },
       {
         id: "a07-negro",
@@ -933,6 +1043,12 @@
         battery: "2 días",
         specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
         tag: "ENTRADA",
+        rank: 7,
+        processor: "Octa-Core 2.2GHz",
+        ram: 4, storage: 64, batteryMah: 5000,
+        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
+        cameraMain: 50, cameraFull: "50+2MP", front: 8,
+        resistance: "—", charge: "—",
       },
       {
         id: "a07-morado",
@@ -945,6 +1061,48 @@
         battery: "2 días",
         specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
         tag: "ENTRADA",
+        rank: 7,
+        processor: "Octa-Core 2.2GHz",
+        ram: 4, storage: 64, batteryMah: 5000,
+        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
+        cameraMain: 50, cameraFull: "50+2MP", front: 8,
+        resistance: "—", charge: "—",
+      },
+      {
+        id: "a07-morado-2",
+        name: "GALAXY A07",
+        price: 2999,
+        color: "morado",
+        colorName: "MORADO",
+        hex: "#7B5EA7",
+        size: "nano",
+        battery: "2 días",
+        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
+        tag: "ENTRADA",
+        rank: 7,
+        processor: "Octa-Core 2.2GHz",
+        ram: 4, storage: 64, batteryMah: 5000,
+        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
+        cameraMain: 50, cameraFull: "50+2MP", front: 8,
+        resistance: "—", charge: "—",
+      },
+      {
+        id: "a07-lite",
+        name: "GALAXY A07 LITE",
+        price: 2999,
+        color: "gris",
+        colorName: "MOTEADO",
+        hex: "#9C9C9C",
+        size: "nano",
+        battery: "2 días",
+        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
+        tag: "ENTRADA",
+        rank: 7,
+        processor: "Octa-Core 2.2GHz",
+        ram: 4, storage: 64, batteryMah: 5000,
+        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
+        cameraMain: 50, cameraFull: "50+2MP", front: 8,
+        resistance: "—", charge: "—",
       },
       {
         id: "a17-gris",
@@ -957,6 +1115,12 @@
         battery: "2 días",
         specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
         tag: "NUEVO",
+        rank: 6,
+        processor: "Exynos 1330",
+        ram: 4, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 90,
+        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
+        resistance: "IP54", charge: "—",
       },
       {
         id: "a17-azul",
@@ -969,6 +1133,12 @@
         battery: "2 días",
         specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
         tag: "NUEVO",
+        rank: 6,
+        processor: "Exynos 1330",
+        ram: 4, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 90,
+        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
+        resistance: "IP54", charge: "—",
       },
       {
         id: "a17-negro",
@@ -981,6 +1151,30 @@
         battery: "2 días",
         specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
         tag: "NUEVO",
+        rank: 6,
+        processor: "Exynos 1330",
+        ram: 4, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 90,
+        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
+        resistance: "IP54", charge: "—",
+      },
+      {
+        id: "a17-negro-2",
+        name: "GALAXY A17 5G",
+        price: 4299,
+        color: "negro",
+        colorName: "NEGRO",
+        hex: "#1A1A1A",
+        size: "nano",
+        battery: "2 días",
+        specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
+        tag: "NUEVO",
+        rank: 6,
+        processor: "Exynos 1330",
+        ram: 4, storage: 128, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 90,
+        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
+        resistance: "IP54", charge: "—",
       },
       {
         id: "a37-negro",
@@ -993,6 +1187,12 @@
         battery: "2 días",
         specs: ["Exynos 1480 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+5MP · IP68"],
         tag: "PRO",
+        rank: 3,
+        processor: "Exynos 1480",
+        ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+8+5MP", front: 12,
+        resistance: "IP68", charge: "Super Fast 2.0",
       },
       {
         id: "a56-gris",
@@ -1005,6 +1205,12 @@
         battery: "2 días",
         specs: ["Exynos 1580 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+12+5MP · IP67"],
         tag: "PRO",
+        rank: 2,
+        processor: "Exynos 1580",
+        ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
+        resistance: "IP67", charge: "45W",
       },
       {
         id: "a56-negro",
@@ -1017,6 +1223,12 @@
         battery: "2 días",
         specs: ["Exynos 1580 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+12+5MP · IP67"],
         tag: "PRO",
+        rank: 2,
+        processor: "Exynos 1580",
+        ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" Super AMOLED", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
+        resistance: "IP67", charge: "45W",
       },
       {
         id: "edge60-gris",
@@ -1029,6 +1241,12 @@
         battery: "2 días",
         specs: ["Dimensity 7300 · 8GB + 256GB", "6.67\" pOLED 1.5K 120Hz", "Cám. 50+13MP · IP68/IP69"],
         tag: "LIMITADO",
+        rank: 4,
+        processor: "Dimensity 7300",
+        ram: 8, storage: 256, batteryMah: 5200,
+        screen: "6.67\" pOLED 1.5K", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50+13MP", front: 32,
+        resistance: "IP68/IP69", charge: "68W",
       },
     ];
 
@@ -1071,7 +1289,6 @@
       cart: [],                      // [{ product, qty }]
       filters: { size: "todos", color: "todos", battery: "todos" },
       compareSlots: [null, null],    // productos puestos en el comparador
-      draggedProduct: null,          // producto que se está arrastrando
       rating: 0,                     // calificación elegida por el usuario
     };
 
@@ -1096,6 +1313,9 @@
       compareSlot1: document.getElementById("compare-slot-1"),
       compareVerdict: document.getElementById("compare-verdict"),
       clearCompareBtn: document.getElementById("clear-compare-btn"),
+      comparePickerOverlay: document.getElementById("compare-picker-overlay"),
+      comparePickerList: document.getElementById("compare-picker-list"),
+      comparePickerClose: document.getElementById("compare-picker-close"),
 
       ratingStars: document.getElementById("rating-stars"),
       ratingFeedback: document.getElementById("rating-feedback"),
@@ -1134,22 +1354,15 @@
         const id = card.dataset.id;
         const product = PRODUCTS.find((p) => p.id === id);
 
-        card.addEventListener("dragstart", () => {
-          state.draggedProduct = product;
-        });
-        card.addEventListener("dragend", () => {
-          state.draggedProduct = null;
-        });
         card.querySelector(".add-to-cart-btn").addEventListener("click", () => addToCart(product));
       });
     }
 
     function productCardHTML(p) {
       return `
-        <div class="product-card" draggable="true" data-id="${p.id}">
+        <div class="product-card" data-id="${p.id}">
           <div class="product-card-top">
             <span class="product-tag">${p.tag}</span>
-            <span class="product-drag-hint">⠿ ARRASTRA</span>
           </div>
 
           <div class="product-visual">
@@ -1291,16 +1504,43 @@
     });
 
     // ==================================================================
-    // 3) COMPARADOR (arrastrar y soltar dos productos)
+    // 3) COMPARADOR (seleccionar de una lista)
     // ==================================================================
 
-    [el.compareSlot0, el.compareSlot1].forEach((slot, index) => {
-      slot.addEventListener("dragover", (e) => e.preventDefault());
-      slot.addEventListener("drop", () => {
-        if (!state.draggedProduct) return;
-        state.compareSlots[index] = state.draggedProduct;
-        renderCompare();
+    let compareTargetSlot = null; // índice del slot (0 o 1) que estamos llenando
+
+    function openComparePicker(index) {
+      compareTargetSlot = index;
+      el.comparePickerList.innerHTML = PRODUCTS.map((p) => `
+        <button class="compare-picker-item" type="button" data-id="${p.id}">
+          <div class="compare-picker-swatch" style="background:${p.hex}"></div>
+          <div>
+            <div class="compare-picker-item-name">${p.name} — ${p.colorName}</div>
+            <div class="compare-picker-item-meta">${money(p.price)} MXN</div>
+          </div>
+        </button>
+      `).join("");
+
+      el.comparePickerList.querySelectorAll(".compare-picker-item").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const product = PRODUCTS.find((p) => p.id === btn.dataset.id);
+          state.compareSlots[compareTargetSlot] = product;
+          renderCompare();
+          closeComparePicker();
+        });
       });
+
+      el.comparePickerOverlay.hidden = false;
+    }
+
+    function closeComparePicker() {
+      el.comparePickerOverlay.hidden = true;
+      compareTargetSlot = null;
+    }
+
+    el.comparePickerClose.addEventListener("click", closeComparePicker);
+    el.comparePickerOverlay.addEventListener("click", (e) => {
+      if (e.target === el.comparePickerOverlay) closeComparePicker();
     });
 
     el.clearCompareBtn.addEventListener("click", () => {
@@ -1313,15 +1553,13 @@
         slot.classList.remove("filled");
         slot.innerHTML = `
           <div class="compare-empty">
-            <div class="bebas">SUELTA AQUÍ CEL ${index + 1}</div>
-            <div class="compare-empty-text">Arrastra desde el catálogo</div>
+            <div class="bebas">CEL ${index + 1}</div>
+            <button class="compare-select-btn" type="button" data-slot="${index}">SELECCIONAR ▾</button>
           </div>
         `;
+        slot.querySelector(".compare-select-btn").addEventListener("click", () => openComparePicker(index));
         return;
       }
-
-      const other = state.compareSlots[1 - index];
-      const isCheaper = other ? product.price < other.price : false;
 
       slot.classList.add("filled");
       slot.innerHTML = `
@@ -1329,11 +1567,10 @@
           <div class="compare-phone-swatch" style="background:${product.hex}">${product.name}</div>
           <div class="compare-info">
             <div class="bebas compare-info-name">${product.name}</div>
-            <div class="compare-info-meta">${money(product.price)} MXN • ${product.battery}</div>
+            <div class="compare-info-meta">${money(product.price)} MXN • Ranking hardware #${product.rank}/7</div>
             <div class="compare-info-specs">
               ${product.specs.map((s) => `<span>${s}</span>`).join("")}
             </div>
-            ${other ? `<div class="compare-info-verdict">${isCheaper ? "🔥 MÁS BARATO" : "💎 MÁS PRO"}</div>` : ""}
           </div>
           <button class="compare-remove" data-index="${index}">✕</button>
         </div>
@@ -1345,20 +1582,75 @@
       });
     }
 
+    // Helpers para decidir quién gana cada renglón de la tabla comparativa
+    function specWinner(valA, valB, higherIsBetter = true) {
+      if (valA === valB || valA == null || valB == null) return null;
+      return higherIsBetter === (valA > valB) ? "a" : "b";
+    }
+    function resistanceScore(r) {
+      if (!r || r === "—") return 0;
+      if (r.includes("IP69")) return 5;
+      if (r.includes("IP68")) return 4;
+      if (r.includes("IP67")) return 3;
+      if (r.includes("IP54")) return 2;
+      return 1;
+    }
+    function chargeWatts(c) {
+      const m = c && c.match(/(\d+)\s*W/i);
+      return m ? parseInt(m[1], 10) : null;
+    }
+
+    function renderCompareTable(a, b) {
+      const rows = [
+        { label: "PRECIO", va: `$${money(a.price)}`, vb: `$${money(b.price)}`, w: specWinner(a.price, b.price, false) },
+        { label: "PROCESADOR", va: a.processor, vb: b.processor, w: specWinner(a.rank, b.rank, false) },
+        { label: "RAM", va: `${a.ram} GB`, vb: `${b.ram} GB`, w: specWinner(a.ram, b.ram, true) },
+        { label: "ALMACENAMIENTO", va: `${a.storage} GB`, vb: `${b.storage} GB`, w: specWinner(a.storage, b.storage, true) },
+        { label: "BATERÍA", va: `${a.batteryMah} mAh`, vb: `${b.batteryMah} mAh`, w: specWinner(a.batteryMah, b.batteryMah, true) },
+        { label: "PANTALLA", va: `${a.screen} · ${a.refreshRate}Hz`, vb: `${b.screen} · ${b.refreshRate}Hz`, w: specWinner(a.refreshRate, b.refreshRate, true) },
+        { label: "CÁMARA TRASERA", va: a.cameraFull, vb: b.cameraFull, w: specWinner(a.cameraMain, b.cameraMain, true) },
+        { label: "CÁMARA FRONTAL", va: `${a.front} MP`, vb: `${b.front} MP`, w: specWinner(a.front, b.front, true) },
+        { label: "RESISTENCIA", va: a.resistance, vb: b.resistance, w: specWinner(resistanceScore(a.resistance), resistanceScore(b.resistance), true) },
+        { label: "CARGA RÁPIDA", va: a.charge, vb: b.charge, w: specWinner(chargeWatts(a.charge), chargeWatts(b.charge), true) },
+      ];
+
+      const winnerOverall = a.rank < b.rank ? a : b.rank < a.rank ? b : null;
+
+      return `
+        ${winnerOverall ? `
+          <div class="compare-overall-winner">
+            🏆 GANADOR GENERAL POR HARDWARE: <strong>${winnerOverall.name}</strong>
+          </div>
+        ` : ""}
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>${a.name}</th>
+              <th>${b.name}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((r) => `
+              <tr>
+                <td class="compare-table-label">${r.label}</td>
+                <td class="${r.w === "a" ? "win" : ""}">${r.va}${r.w === "a" ? " ✅" : ""}</td>
+                <td class="${r.w === "b" ? "win" : ""}">${r.vb}${r.w === "b" ? " ✅" : ""}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderCompare() {
       renderCompareSlot(el.compareSlot0, state.compareSlots[0], 0);
       renderCompareSlot(el.compareSlot1, state.compareSlots[1], 1);
 
       const [a, b] = state.compareSlots;
       if (a && b) {
-        const diff = Math.abs(a.price - b.price);
-        const sameSize = a.size === b.size;
         el.compareVerdict.hidden = false;
-        el.compareVerdict.innerHTML = `
-          <span>VEREDICTO:</span>
-          <span class="verdict-pill">DIFERENCIA ${money(diff)} MXN</span>
-          <span>• ${sameSize ? "MISMO TAMAÑO, DISTINTA ACTITUD" : `${a.size.toUpperCase()} VS ${b.size.toUpperCase()}`}</span>
-        `;
+        el.compareVerdict.innerHTML = renderCompareTable(a, b);
       } else {
         el.compareVerdict.hidden = true;
       }
