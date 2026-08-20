@@ -962,6 +962,15 @@
 
       <span class="filter-divider"></span>
 
+      <div class="filter-label">📍 IR A:</div>
+      <div class="filter-group" id="filter-vitrina-nav" data-filter="nav">
+        <button class="filter-chip" data-target="vitrina-principal">VITRINA 1 · PRINCIPAL</button>
+        <button class="filter-chip" data-target="vitrina-curva">VITRINA CURVA</button>
+        <button class="filter-chip" data-target="vitrina-vitrina2">VITRINA 2</button>
+      </div>
+
+      <span class="filter-divider"></span>
+
       <div class="filter-label">🎨 COLOR:</div>
       <div class="filter-group filter-group-color" id="filter-color" data-filter="color">
         <button class="filter-chip filter-chip-pink active" data-value="todos">TODOS</button>
@@ -1516,7 +1525,7 @@
         }).join("");
 
         return `
-          <div class="vitrina-block">
+          <div class="vitrina-block" id="vitrina-${vit.id}">
             <div class="vitrina-heading reveal">
               <h3 class="bebas">${vit.title}</h3>
               <p class="vitrina-subtitle">${vit.subtitle}</p>
@@ -1592,7 +1601,25 @@
 
     // Filtros: cada grupo de botones (tamaño / color / batería) se maneja igual
     document.querySelectorAll(".filter-group").forEach((group) => {
-      const filterKey = group.dataset.filter; // "size" | "color" | "battery"
+      const filterKey = group.dataset.filter; // "size" | "color" | "battery" | "nav"
+
+      // Grupo especial "IR A": no filtra productos, solo hace scroll
+      // al inicio de la vitrina correspondiente.
+      if (filterKey === "nav") {
+        group.querySelectorAll(".filter-chip").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            const target = document.getElementById(chip.dataset.target);
+            if (!target) return;
+
+            const header = document.querySelector(".site-header");
+            const headerOffset = (header ? header.offsetHeight : 100) + 12;
+            const top = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+            window.scrollTo({ top, behavior: "smooth" });
+          });
+        });
+        return; // no participa del sistema normal de filtros
+      }
 
       group.querySelectorAll(".filter-chip").forEach((chip) => {
         chip.addEventListener("click", () => {
