@@ -378,6 +378,21 @@
     .hint-text { font-size: 12px; margin-top: 4px; max-width: 200px; }
 
     .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+    .vitrina-block { margin-bottom: 40px; }
+    .vitrina-block:last-child { margin-bottom: 0; }
+    .vitrina-heading { margin-bottom: 20px; }
+    .vitrina-heading h3 {
+      font-size: clamp(22px, 6vw, 32px); display: inline-block;
+      background: var(--black); color: var(--yellow); padding: 4px 12px;
+      transform: rotate(-1deg);
+    }
+    .vitrina-subtitle { font-size: 12px; font-weight: 700; margin: 6px 0 0; opacity: 0.7; }
+
+    .color-dots { display: flex; gap: 4px; margin-top: 6px; justify-content: center; flex-wrap: wrap; }
+    .color-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--black); display: inline-block; }
+
+    .cart-item-color { font-weight: 700; opacity: 0.7; font-size: 11px; }
     .catalog-empty {
       grid-column: 1 / -1; text-align: center; padding: 48px 20px;
       border: 3px dashed var(--black); background: white;
@@ -955,6 +970,8 @@
         <button class="filter-chip filter-chip-pink" data-value="azul">AZUL</button>
         <button class="filter-chip filter-chip-pink" data-value="verde">VERDE</button>
         <button class="filter-chip filter-chip-pink" data-value="morado">MORADO</button>
+        <button class="filter-chip filter-chip-pink" data-value="naranja">NARANJA</button>
+        <button class="filter-chip filter-chip-pink" data-value="plata">PLATA</button>
       </div>
 
       <span class="filter-divider"></span>
@@ -980,8 +997,8 @@
       </div>
     </div>
 
-    <div class="catalog-grid" id="catalog-grid">
-      <!-- las tarjetas de producto se generan por JS a partir de PRODUCTS -->
+    <div id="catalog-sections">
+      <!-- las vitrinas y tarjetas de producto se generan por JS a partir de PRODUCTS -->
     </div>
   </section>
 
@@ -1020,6 +1037,17 @@
         <button class="compare-picker-close" id="compare-picker-close" type="button">✕</button>
       </div>
       <div id="compare-picker-list" class="compare-picker-list"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SELECTOR DE COLOR (para agregar al carrito) ===================== -->
+  <div id="color-picker-overlay" class="compare-picker-overlay" hidden>
+    <div class="compare-picker-box brutal">
+      <div class="compare-picker-header">
+        <div class="bebas compare-picker-title" id="color-picker-title">¿QUÉ COLOR?</div>
+        <button class="compare-picker-close" id="color-picker-close" type="button">✕</button>
+      </div>
+      <div id="color-picker-list" class="compare-picker-list"></div>
     </div>
   </div>
 
@@ -1111,367 +1139,238 @@
     // ==========================================================
 
     const PRODUCTS = [
+      // ==================== VITRINA 1 PRINCIPAL ====================
       {
-        id: "a57-negro",
-        name: "GALAXY A57 5G",
-        price: 9999,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "mini",
-        battery: "2 días",
-        specs: ["Exynos 1680 · 8GB + 256GB", "6.7\" Super AMOLED Plus 120Hz", "Cám. 50+12+5MP · IP68"],
-        tag: "TOP GAMA",
-        rank: 2,
-        processor: "Exynos 1680",
-        ram: 8, storage: 256, batteryMah: 5000,
+        id: "a57", vitrina: "principal", name: "GALAXY A57 5G", tag: "TOP GAMA", rank: 2, size: "mini",
+        price: 9999, battery: "2 días",
+        processor: "Exynos 1680", ram: 8, storage: 256, batteryMah: 5000,
         screen: "6.7\" Super AMOLED Plus", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
-        resistance: "IP68", charge: "—",
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12, resistance: "IP68", charge: "—",
+        variants: [
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+          { color: "gris", colorName: "GRIS", hex: "#8E8E93", stock: 1 },
+        ],
       },
       {
-        id: "a57-gris",
-        name: "GALAXY A57 5G",
-        price: 9999,
-        color: "gris",
-        colorName: "GRIS",
-        hex: "#8E8E93",
-        size: "mini",
-        battery: "2 días",
-        specs: ["Exynos 1680 · 8GB + 256GB", "6.7\" Super AMOLED Plus 120Hz", "Cám. 50+12+5MP · IP68"],
-        tag: "TOP GAMA",
-        rank: 2,
-        processor: "Exynos 1680",
-        ram: 8, storage: 256, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED Plus", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
-        resistance: "IP68", charge: "—",
-      },
-      {
-        id: "a26-verde",
-        name: "GALAXY A26 5G",
-        price: 5999,
-        color: "verde",
-        colorName: "VERDE",
-        hex: "#4C9A5B",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Exynos 1280 · 6GB + 128GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+2MP · IP67"],
-        tag: "BEST SELLER",
-        rank: 7,
-        processor: "Exynos 1280",
-        ram: 6, storage: 128, batteryMah: 5000,
+        id: "a26", vitrina: "principal", name: "GALAXY A26 5G", tag: "BEST SELLER", rank: 11, size: "ultra",
+        price: 5999, battery: "2 días",
+        processor: "Exynos 1280", ram: 6, storage: 128, batteryMah: 5000,
         screen: "6.7\" Super AMOLED", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+8+2MP", front: 13,
-        resistance: "IP67", charge: "—",
+        cameraMain: 50, cameraFull: "50+8+2MP", front: 13, resistance: "IP67", charge: "—",
+        variants: [
+          { color: "gris", colorName: "ESTÁNDAR", hex: "#8E8E93", stock: 1 },
+          { color: "verde", colorName: "VERDE", hex: "#4C9A5B", stock: 1 },
+        ],
       },
       {
-        id: "a26-base",
-        name: "GALAXY A26 5G",
-        price: 5999,
-        color: "gris",
-        colorName: "ESTÁNDAR",
-        hex: "#8E8E93",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Exynos 1280 · 6GB + 128GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+2MP · IP67"],
-        tag: "BEST SELLER",
-        rank: 7,
-        processor: "Exynos 1280",
-        ram: 6, storage: 128, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+8+2MP", front: 13,
-        resistance: "IP67", charge: "—",
-      },
-      {
-        id: "a07-negro",
-        name: "GALAXY A07",
-        price: 2999,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
-        tag: "ENTRADA",
-        rank: 9,
-        processor: "Octa-Core 2.2GHz",
-        ram: 4, storage: 64, batteryMah: 5000,
+        id: "a07", vitrina: "principal", name: "GALAXY A07", tag: "ENTRADA", rank: 19, size: "nano",
+        price: 2999, battery: "2 días",
+        processor: "Octa-Core 2.2GHz", ram: 4, storage: 64, batteryMah: 5000,
         screen: "6.7\" PLS LCD HD+", refreshRate: 60,
-        cameraMain: 50, cameraFull: "50+2MP", front: 8,
-        resistance: "—", charge: "—",
+        cameraMain: 50, cameraFull: "50+2MP", front: 8, resistance: "—", charge: "—",
+        variants: [
+          { color: "gris", colorName: "ESTÁNDAR", hex: "#9C9C9C", stock: 1 },
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+          { color: "gris", colorName: "MOTEADO", hex: "#B5B0A6", stock: 1 },
+          { color: "morado", colorName: "MORADO", hex: "#7B5EA7", stock: 2 },
+        ],
       },
       {
-        id: "a07-morado",
-        name: "GALAXY A07",
-        price: 2999,
-        color: "morado",
-        colorName: "MORADO",
-        hex: "#7B5EA7",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
-        tag: "ENTRADA",
-        rank: 9,
-        processor: "Octa-Core 2.2GHz",
-        ram: 4, storage: 64, batteryMah: 5000,
-        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
-        cameraMain: 50, cameraFull: "50+2MP", front: 8,
-        resistance: "—", charge: "—",
-      },
-      {
-        id: "a07-morado-2",
-        name: "GALAXY A07",
-        price: 2999,
-        color: "morado",
-        colorName: "MORADO",
-        hex: "#7B5EA7",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
-        tag: "ENTRADA",
-        rank: 9,
-        processor: "Octa-Core 2.2GHz",
-        ram: 4, storage: 64, batteryMah: 5000,
-        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
-        cameraMain: 50, cameraFull: "50+2MP", front: 8,
-        resistance: "—", charge: "—",
-      },
-      {
-        id: "a07-lite",
-        name: "GALAXY A07 LITE",
-        price: 2999,
-        color: "gris",
-        colorName: "MOTEADO",
-        hex: "#9C9C9C",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Octa-Core 2.2GHz · 4GB + 64GB", "6.7\" PLS LCD HD+", "Cám. 50+2MP · 4G LTE"],
-        tag: "ENTRADA",
-        rank: 9,
-        processor: "Octa-Core 2.2GHz",
-        ram: 4, storage: 64, batteryMah: 5000,
-        screen: "6.7\" PLS LCD HD+", refreshRate: 60,
-        cameraMain: 50, cameraFull: "50+2MP", front: 8,
-        resistance: "—", charge: "—",
-      },
-      {
-        id: "a17-gris",
-        name: "GALAXY A17 5G",
-        price: 4299,
-        color: "gris",
-        colorName: "GRIS",
-        hex: "#8E8E93",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
-        tag: "NUEVO",
-        rank: 8,
-        processor: "Exynos 1330",
-        ram: 4, storage: 128, batteryMah: 5000,
+        id: "a17", vitrina: "principal", name: "GALAXY A17 5G", tag: "NUEVO", rank: 13, size: "nano",
+        price: 4299, battery: "2 días",
+        processor: "Exynos 1330", ram: 4, storage: 128, batteryMah: 5000,
         screen: "6.7\" Super AMOLED", refreshRate: 90,
-        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
-        resistance: "IP54", charge: "—",
+        cameraMain: 50, cameraFull: "50+5+2MP", front: 13, resistance: "IP54", charge: "—",
+        variants: [
+          { color: "gris", colorName: "GRIS", hex: "#8E8E93", stock: 1 },
+          { color: "azul", colorName: "AZUL", hex: "#3A5FCD", stock: 1 },
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 2 },
+        ],
       },
       {
-        id: "a17-azul",
-        name: "GALAXY A17 5G",
-        price: 4299,
-        color: "azul",
-        colorName: "AZUL",
-        hex: "#3A5FCD",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
-        tag: "NUEVO",
-        rank: 8,
-        processor: "Exynos 1330",
-        ram: 4, storage: 128, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED", refreshRate: 90,
-        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
-        resistance: "IP54", charge: "—",
-      },
-      {
-        id: "a17-negro",
-        name: "GALAXY A17 5G",
-        price: 4299,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
-        tag: "NUEVO",
-        rank: 8,
-        processor: "Exynos 1330",
-        ram: 4, storage: 128, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED", refreshRate: 90,
-        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
-        resistance: "IP54", charge: "—",
-      },
-      {
-        id: "a17-negro-2",
-        name: "GALAXY A17 5G",
-        price: 4299,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "nano",
-        battery: "2 días",
-        specs: ["Exynos 1330 · 4GB + 128GB", "6.7\" Super AMOLED 90Hz", "Cám. 50+5+2MP · IP54"],
-        tag: "NUEVO",
-        rank: 8,
-        processor: "Exynos 1330",
-        ram: 4, storage: 128, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED", refreshRate: 90,
-        cameraMain: 50, cameraFull: "50+5+2MP", front: 13,
-        resistance: "IP54", charge: "—",
-      },
-      {
-        id: "a37-negro",
-        name: "GALAXY A37 5G",
-        price: 7499,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Exynos 1480 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+8+5MP · IP68"],
-        tag: "PRO",
-        rank: 6,
-        processor: "Exynos 1480",
-        ram: 8, storage: 256, batteryMah: 5000,
+        id: "a56", vitrina: "principal", name: "GALAXY A56 5G", tag: "PRO", rank: 5, size: "mini",
+        price: 8999, battery: "2 días",
+        processor: "Exynos 1580", ram: 8, storage: 256, batteryMah: 5000,
         screen: "6.7\" Super AMOLED", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+8+5MP", front: 12,
-        resistance: "IP68", charge: "Super Fast 2.0",
+        cameraMain: 50, cameraFull: "50+12+5MP", front: 12, resistance: "IP67", charge: "45W",
+        variants: [
+          { color: "gris", colorName: "GRIS", hex: "#8E8E93", stock: 1 },
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+        ],
       },
       {
-        id: "a56-gris",
-        name: "GALAXY A56 5G",
-        price: 8999,
-        color: "gris",
-        colorName: "GRIS",
-        hex: "#8E8E93",
-        size: "mini",
-        battery: "2 días",
-        specs: ["Exynos 1580 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+12+5MP · IP67"],
-        tag: "PRO",
-        rank: 5,
-        processor: "Exynos 1580",
-        ram: 8, storage: 256, batteryMah: 5000,
+        id: "a37", vitrina: "principal", name: "GALAXY A37 5G", tag: "PRO", rank: 7, size: "ultra",
+        price: 7499, battery: "2 días",
+        processor: "Exynos 1480", ram: 8, storage: 256, batteryMah: 5000,
         screen: "6.7\" Super AMOLED", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
-        resistance: "IP67", charge: "45W",
+        cameraMain: 50, cameraFull: "50+8+5MP", front: 12, resistance: "IP68", charge: "Super Fast 2.0",
+        variants: [
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+        ],
       },
       {
-        id: "a56-negro",
-        name: "GALAXY A56 5G",
-        price: 8999,
-        color: "negro",
-        colorName: "NEGRO",
-        hex: "#1A1A1A",
-        size: "mini",
-        battery: "2 días",
-        specs: ["Exynos 1580 · 8GB + 256GB", "6.7\" Super AMOLED 120Hz", "Cám. 50+12+5MP · IP67"],
-        tag: "PRO",
-        rank: 5,
-        processor: "Exynos 1580",
-        ram: 8, storage: 256, batteryMah: 5000,
-        screen: "6.7\" Super AMOLED", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+12+5MP", front: 12,
-        resistance: "IP67", charge: "45W",
-      },
-      {
-        id: "edge60-gris",
-        name: "MOTOROLA EDGE 60 FUSION",
-        price: 8499,
-        color: "gris",
-        colorName: "GRIS",
-        hex: "#5B5B66",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Dimensity 7300 · 8GB + 256GB", "6.67\" pOLED 1.5K 120Hz", "Cám. 50+13MP · IP68/IP69"],
-        tag: "LIMITADO",
-        rank: 3,
-        processor: "Dimensity 7300",
-        ram: 8, storage: 256, batteryMah: 5200,
+        id: "edge60", vitrina: "principal", name: "MOTOROLA EDGE 60 FUSION", tag: "LIMITADO", rank: 3, size: "mini",
+        price: 8499, battery: "2 días",
+        processor: "Dimensity 7300", ram: 8, storage: 256, batteryMah: 5200,
         screen: "6.67\" pOLED 1.5K", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+13MP", front: 32,
-        resistance: "IP68/IP69", charge: "68W",
+        cameraMain: 50, cameraFull: "50+13MP", front: 32, resistance: "IP68/IP69", charge: "68W",
+        variants: [
+          { color: "gris", colorName: "GRIS", hex: "#5B5B66", stock: 1 },
+        ],
       },
+
+      // ==================== VITRINA CURVA ====================
       {
-        id: "moto-g86-morado",
-        name: "MOTOROLA MOTO G86 5G",
-        price: 7999,
-        color: "morado",
-        colorName: "MORADO",
-        hex: "#7B5EA7",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Dimensity 7300 · 8GB + 256GB", "6.67\" pOLED Super HD 120Hz", "Cám. 50+8MP · IP68+IP69"],
-        tag: "NUEVO",
-        rank: 4,
-        processor: "Dimensity 7300",
-        ram: 8, storage: 256, batteryMah: 5200,
+        id: "moto-g86", vitrina: "curva", name: "MOTOROLA MOTO G86 5G", tag: "NUEVO", rank: 4, size: "mini",
+        price: 7999, battery: "2 días",
+        processor: "Dimensity 7300", ram: 8, storage: 256, batteryMah: 5200,
         screen: "6.67\" pOLED Super HD", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50MP Sony LYTIA 600 + 8MP", front: 32,
-        resistance: "IP68 + IP69", charge: "30W",
+        cameraMain: 50, cameraFull: "50MP Sony LYTIA 600 + 8MP", front: 32, resistance: "IP68 + IP69", charge: "30W",
+        variants: [
+          { color: "morado", colorName: "MORADO", hex: "#7B5EA7", stock: 2 },
+          { color: "azul", colorName: "AZUL", hex: "#3A5FCD", stock: 1 },
+        ],
       },
       {
-        id: "moto-g86-morado-2",
-        name: "MOTOROLA MOTO G86 5G",
-        price: 7999,
-        color: "morado",
-        colorName: "MORADO",
-        hex: "#7B5EA7",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Dimensity 7300 · 8GB + 256GB", "6.67\" pOLED Super HD 120Hz", "Cám. 50+8MP · IP68+IP69"],
-        tag: "NUEVO",
-        rank: 4,
-        processor: "Dimensity 7300",
-        ram: 8, storage: 256, batteryMah: 5200,
-        screen: "6.67\" pOLED Super HD", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50MP Sony LYTIA 600 + 8MP", front: 32,
-        resistance: "IP68 + IP69", charge: "30W",
-      },
-      {
-        id: "moto-g86-azul",
-        name: "MOTOROLA MOTO G86 5G",
-        price: 7999,
-        color: "azul",
-        colorName: "AZUL",
-        hex: "#3A5FCD",
-        size: "ultra",
-        battery: "2 días",
-        specs: ["Dimensity 7300 · 8GB + 256GB", "6.67\" pOLED Super HD 120Hz", "Cám. 50+8MP · IP68+IP69"],
-        tag: "NUEVO",
-        rank: 4,
-        processor: "Dimensity 7300",
-        ram: 8, storage: 256, batteryMah: 5200,
-        screen: "6.67\" pOLED Super HD", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50MP Sony LYTIA 600 + 8MP", front: 32,
-        resistance: "IP68 + IP69", charge: "30W",
-      },
-      {
-        id: "s24-azul",
-        name: "GALAXY S24",
-        price: 14999,
-        color: "azul",
-        colorName: "AZUL ZAFIRO",
-        hex: "#1F3A6E",
-        size: "mini",
-        battery: "2 días",
-        specs: ["Exynos 2400 / SD8 Gen3 · 8GB + 128GB", "6.2\" Dynamic AMOLED 2X 120Hz", "Cám. 50+10+12MP · IP68"],
-        tag: "TOP GAMA",
-        rank: 1,
-        processor: "Exynos 2400 / Snapdragon 8 Gen 3",
-        ram: 8, storage: 128, batteryMah: 4000,
+        id: "s24", vitrina: "curva", name: "GALAXY S24", tag: "TOP GAMA", rank: 1, size: "mini",
+        price: 14999, battery: "2 días",
+        processor: "Exynos 2400 / Snapdragon 8 Gen 3", ram: 8, storage: 128, batteryMah: 4000,
         screen: "6.2\" Dynamic AMOLED 2X", refreshRate: 120,
-        cameraMain: 50, cameraFull: "50+10+12MP (zoom óptico 3X)", front: 12,
-        resistance: "IP68", charge: "25W",
+        cameraMain: 50, cameraFull: "50+10+12MP (zoom óptico 3X)", front: 12, resistance: "IP68", charge: "25W",
+        variants: [
+          { color: "azul", colorName: "AZUL ZAFIRO", hex: "#1F3A6E", stock: 1 },
+        ],
+      },
+
+      // ==================== VITRINA 2 ====================
+      {
+        id: "redmi-note15pro", vitrina: "vitrina2", name: "REDMI NOTE 15 PRO", tag: "CÁMARA 200MP", rank: 6, size: "ultra",
+        price: 7999, battery: "2 días",
+        processor: "Helio G200-Ultra", ram: 8, storage: 256, batteryMah: 6500,
+        screen: "6.77\" AMOLED", refreshRate: 120,
+        cameraMain: 200, cameraFull: "200+8MP", front: 32, resistance: "IP65", charge: "45W",
+        variants: [
+          { color: "negro", colorName: "ESTÁNDAR", hex: "#232323", stock: 1 },
+        ],
+      },
+      {
+        id: "redmi15", vitrina: "vitrina2", name: "REDMI 15", tag: "BATERÍA 7000mAh", rank: 12, size: "ultra",
+        price: 4999, battery: "2 días",
+        processor: "Snapdragon 685", ram: 8, storage: 256, batteryMah: 7000,
+        screen: "6.9\" FHD+", refreshRate: 144,
+        cameraMain: 50, cameraFull: "50MP", front: 8, resistance: "IP64", charge: "33W",
+        variants: [
+          { color: "morado", colorName: "MORADO", hex: "#7B5EA7", stock: 1 },
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+          { color: "plata", colorName: "PLATA", hex: "#C6C6CE", stock: 1 },
+        ],
+      },
+      {
+        id: "zte-bladev70", vitrina: "vitrina2", name: "ZTE BLADE V70", tag: "CÁMARA 108MP", rank: 14, size: "nano",
+        price: 3999, battery: "2 días",
+        processor: "Unisoc T616", ram: 8, storage: 256, batteryMah: 5000,
+        screen: "6.7\" HD+", refreshRate: 120,
+        cameraMain: 108, cameraFull: "108MP", front: 16, resistance: "—", charge: "22.5W",
+        variants: [
+          { color: "negro", colorName: "ESTÁNDAR", hex: "#232323", stock: 1 },
+        ],
+      },
+      {
+        id: "zte-axon70", vitrina: "vitrina2", name: "ZTE AXON 70", tag: "NUEVO", rank: 15, size: "nano",
+        price: 3499, battery: "2 días",
+        processor: "Unisoc T616", ram: 6, storage: 256, batteryMah: 5000,
+        screen: "6.7\" HD+", refreshRate: 120,
+        cameraMain: 108, cameraFull: "108+2MP", front: 16, resistance: "—", charge: "22.5W",
+        variants: [
+          { color: "negro", colorName: "ESTÁNDAR", hex: "#232323", stock: 1 },
+          { color: "verde", colorName: "VERDE", hex: "#4C9A5B", stock: 1 },
+        ],
+      },
+      {
+        id: "moto-g15", vitrina: "vitrina2", name: "MOTOROLA MOTO G15", tag: "ENTRADA", rank: 16, size: "nano",
+        price: 3299, battery: "2 días",
+        processor: "Helio G81 Extreme", ram: 4, storage: 256, batteryMah: 5200,
+        screen: "6.72\" Full HD+", refreshRate: 90,
+        cameraMain: 50, cameraFull: "50+5MP", front: 8, resistance: "—", charge: "20W",
+        variants: [
+          { color: "naranja", colorName: "NARANJA", hex: "#E67E22", stock: 1 },
+          { color: "gris", colorName: "GRIS", hex: "#8E8E93", stock: 1 },
+        ],
+      },
+      {
+        id: "moto-g06", vitrina: "vitrina2", name: "MOTOROLA MOTO G06", tag: "ENTRADA", rank: 17, size: "nano",
+        price: 2799, battery: "2 días",
+        processor: "Helio G81 Extreme", ram: 4, storage: 256, batteryMah: 5200,
+        screen: "6.88\" HD+", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50MP", front: 8, resistance: "IP64", charge: "10W",
+        variants: [
+          { color: "azul", colorName: "AZUL", hex: "#3A5FCD", stock: 1 },
+        ],
+      },
+      {
+        id: "moto-e14", vitrina: "vitrina2", name: "MOTOROLA MOTO E14", tag: "GO EDITION", rank: 20, size: "nano",
+        price: 2199, battery: "2 días",
+        processor: "Unisoc T606", ram: 2, storage: 128, batteryMah: 5000,
+        screen: "6.56\" HD+", refreshRate: 90,
+        cameraMain: 13, cameraFull: "13MP", front: 5, resistance: "—", charge: "10W",
+        variants: [
+          { color: "azul", colorName: "AZUL", hex: "#3A5FCD", stock: 1 },
+        ],
+      },
+      {
+        id: "moto-g17power", vitrina: "vitrina2", name: "MOTOROLA MOTO G17 POWER", tag: "BATERÍA 7000mAh", rank: 9, size: "ultra",
+        price: 5999, battery: "2 días",
+        processor: "MediaTek", ram: 8, storage: 256, batteryMah: 7000,
+        screen: "6.7\"", refreshRate: 120,
+        cameraMain: 50, cameraFull: "50MP", front: 16, resistance: "IP68", charge: "30W",
+        variants: [
+          { color: "azul", colorName: "AZUL", hex: "#3A5FCD", stock: 1 },
+          { color: "negro", colorName: "NEGRO/OSCURO", hex: "#1A1A1A", stock: 1 },
+        ],
+      },
+      {
+        id: "redmi-note14", vitrina: "vitrina2", name: "REDMI NOTE 14", tag: "AMOLED", rank: 8, size: "ultra",
+        price: 5499, battery: "2 días",
+        processor: "Helio G99-Ultra", ram: 8, storage: 256, batteryMah: 5500,
+        screen: "6.67\" AMOLED", refreshRate: 120,
+        cameraMain: 108, cameraFull: "108+2+2MP", front: 20, resistance: "IP54", charge: "33W",
+        variants: [
+          { color: "verde", colorName: "VERDE", hex: "#4C9A5B", stock: 1 },
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+        ],
+      },
+      {
+        id: "redmi-a7pro", vitrina: "vitrina2", name: "REDMI A7 PRO", tag: "ENTRADA", rank: 18, size: "nano",
+        price: 2799, battery: "2 días",
+        processor: "Octa-Core", ram: 6, storage: 256, batteryMah: 6000,
+        screen: "6.9\"", refreshRate: 120,
+        cameraMain: 13, cameraFull: "13MP con IA", front: 5, resistance: "—", charge: "18W",
+        variants: [
+          { color: "negro", colorName: "NEGRO", hex: "#1A1A1A", stock: 1 },
+        ],
+      },
+      {
+        id: "redmi13x", vitrina: "vitrina2", name: "REDMI 13X", tag: "CÁMARA 108MP", rank: 10, size: "ultra",
+        price: 4499, battery: "2 días",
+        processor: "Helio G91-Ultra", ram: 8, storage: 256, batteryMah: 5030,
+        screen: "6.79\" FHD+", refreshRate: 90,
+        cameraMain: 108, cameraFull: "108+2MP", front: 13, resistance: "—", charge: "33W",
+        variants: [
+          { color: "negro", colorName: "NEGRO MEDIANOCHE", hex: "#0F0F1A", stock: 1 },
+        ],
       },
     ];
+
+    const VITRINAS = [
+      { id: "principal", title: "VITRINA 1 — PRINCIPAL", subtitle: "Los clásicos de la casa" },
+      { id: "curva", title: "VITRINA CURVA", subtitle: "Los premium en exhibición especial" },
+      { id: "vitrina2", title: "VITRINA 2", subtitle: "Más opciones, más marcas" },
+    ];
+
+    // Genera un id único por color para carrito/comparador: "a57__negro"
+    function variantId(product, variant) {
+      return `${product.id}__${variant.color}__${variant.colorName}`;
+    }
 
     const TESTIMONIALS = [
       {
@@ -1517,7 +1416,7 @@
 
     // Referencias a elementos del DOM que usamos varias veces
     const el = {
-      catalogGrid: document.getElementById("catalog-grid"),
+      catalogSections: document.getElementById("catalog-sections"),
       catalogCount: document.getElementById("catalog-count"),
       reviewsList: document.getElementById("reviews-list"),
 
@@ -1539,6 +1438,11 @@
       comparePickerOverlay: document.getElementById("compare-picker-overlay"),
       comparePickerList: document.getElementById("compare-picker-list"),
       comparePickerClose: document.getElementById("compare-picker-close"),
+
+      colorPickerOverlay: document.getElementById("color-picker-overlay"),
+      colorPickerTitle: document.getElementById("color-picker-title"),
+      colorPickerList: document.getElementById("color-picker-list"),
+      colorPickerClose: document.getElementById("color-picker-close"),
 
       ratingStars: document.getElementById("rating-stars"),
       ratingFeedback: document.getElementById("rating-feedback"),
@@ -1564,14 +1468,22 @@
     // 1) CATÁLOGO — pintar tarjetas de producto según los filtros activos
     // ==================================================================
 
+    function productSpecsList(p) {
+      return [
+        `${p.processor} · ${p.ram}GB + ${p.storage}GB`,
+        `${p.screen} ${p.refreshRate}Hz`,
+        `Cám. ${p.cameraFull} · ${p.resistance}`,
+      ];
+    }
+
     function getFilteredProducts() {
       return PRODUCTS.filter((p) => {
         if (state.filters.size !== "todos" && p.size !== state.filters.size) return false;
-        if (state.filters.color !== "todos" && p.color !== state.filters.color) return false;
+        if (state.filters.color !== "todos" && !p.variants.some((v) => v.color === state.filters.color)) return false;
         if (state.filters.battery !== "todos" && p.battery !== state.filters.battery) return false;
         if (state.filters.search) {
           const q = state.filters.search.trim().toLowerCase();
-          const haystack = `${p.name} ${p.colorName}`.toLowerCase();
+          const haystack = `${p.name} ${p.variants.map((v) => v.colorName).join(" ")}`.toLowerCase();
           if (!haystack.includes(q)) return false;
         }
         return true;
@@ -1583,7 +1495,7 @@
       el.catalogCount.textContent = products.length;
 
       if (products.length === 0) {
-        el.catalogGrid.innerHTML = `
+        el.catalogSections.innerHTML = `
           <div class="catalog-empty">
             <div class="bebas">😕 SIN RESULTADOS</div>
             <p>No encontramos ningún equipo con "<strong>${state.filters.search}</strong>". Prueba con otro nombre o quita los filtros.</p>
@@ -1592,21 +1504,52 @@
         return;
       }
 
-      el.catalogGrid.innerHTML = products.map((p, i) => productCardHTML(p, i)).join("");
+      let cardIndex = 0;
+      const sectionsHTML = VITRINAS.map((vit) => {
+        const vitProducts = products.filter((p) => p.vitrina === vit.id);
+        if (vitProducts.length === 0) return "";
+
+        const cardsHTML = vitProducts.map((p) => {
+          const html = productCardHTML(p, cardIndex);
+          cardIndex++;
+          return html;
+        }).join("");
+
+        return `
+          <div class="vitrina-block">
+            <div class="vitrina-heading reveal">
+              <h3 class="bebas">${vit.title}</h3>
+              <p class="vitrina-subtitle">${vit.subtitle}</p>
+            </div>
+            <div class="catalog-grid">${cardsHTML}</div>
+          </div>
+        `;
+      }).join("");
+
+      el.catalogSections.innerHTML = sectionsHTML;
 
       // Volvemos a enganchar los eventos porque el HTML se regeneró
-      el.catalogGrid.querySelectorAll(".product-card").forEach((card) => {
+      el.catalogSections.querySelectorAll(".product-card").forEach((card) => {
         const id = card.dataset.id;
         const product = PRODUCTS.find((p) => p.id === id);
 
-        card.querySelector(".add-to-cart-btn").addEventListener("click", () => addToCart(product));
+        card.querySelector(".add-to-cart-btn").addEventListener("click", () => handleAddToCart(product));
       });
 
-      observeReveals(el.catalogGrid);
+      observeReveals(el.catalogSections);
     }
 
     function productCardHTML(p, index = 0) {
       const delay = (index % 6) * 0.06;
+      const mainVariant = p.variants[0];
+      const multiColor = p.variants.length > 1;
+
+      const colorInfoHTML = multiColor
+        ? `<div class="product-color-name">COLORES: ${p.variants.map((v) => v.colorName).join(", ")}</div>`
+        : `<div class="product-color-name">${mainVariant.colorName}${mainVariant.stock > 1 ? ` · DISPONIBLES: ${mainVariant.stock}` : ""}</div>`;
+
+      const colorDotsHTML = p.variants.map((v) => `<span class="color-dot" style="background:${v.hex}" title="${v.colorName}"></span>`).join("");
+
       return `
         <div class="product-card reveal" style="transition-delay:${delay}s" data-id="${p.id}">
           <div class="product-card-top">
@@ -1614,15 +1557,16 @@
           </div>
 
           <div class="product-visual">
-            <div class="product-visual-circle" style="background:${p.hex}"></div>
-            <div class="product-visual-phone" style="background:${p.hex}">
+            <div class="product-visual-circle" style="background:${mainVariant.hex}"></div>
+            <div class="product-visual-phone" style="background:${mainVariant.hex}">
               <div class="product-visual-notch"></div>
               <div class="product-visual-label">${p.name.split(" ")[0]}</div>
               <div class="product-visual-grid">
                 <div></div><div class="dark"></div>
               </div>
             </div>
-            <div class="product-color-name">${p.colorName}</div>
+            ${colorInfoHTML}
+            ${multiColor ? `<div class="color-dots">${colorDotsHTML}</div>` : ""}
           </div>
 
           <h3 class="bebas product-name">${p.name}</h3>
@@ -1632,7 +1576,7 @@
           </div>
 
           <ul class="product-specs">
-            ${p.specs.map((s) => `<li><span class="bullet">•</span>${s}</li>`).join("")}
+            ${productSpecsList(p).map((s) => `<li><span class="bullet">•</span>${s}</li>`).join("")}
           </ul>
 
           <div class="product-footer">
@@ -1690,7 +1634,7 @@
       }
 
       const matches = PRODUCTS.filter((p) =>
-        `${p.name} ${p.colorName}`.toLowerCase().includes(q)
+        `${p.name} ${p.variants.map((v) => v.colorName).join(" ")}`.toLowerCase().includes(q)
       ).slice(0, 6);
 
       el.searchSuggestions.hidden = false;
@@ -1700,15 +1644,20 @@
         return;
       }
 
-      el.searchSuggestions.innerHTML = matches.map((p) => `
-        <button class="search-suggestion-item" type="button" data-id="${p.id}">
-          <div class="search-suggestion-swatch" style="background:${p.hex}"></div>
-          <div>
-            <div class="search-suggestion-name">${p.name} — ${p.colorName}</div>
-            <div class="search-suggestion-meta">${money(p.price)} MXN</div>
-          </div>
-        </button>
-      `).join("");
+      el.searchSuggestions.innerHTML = matches.map((p) => {
+        const colorLabel = p.variants.length > 1
+          ? `${p.variants.length} colores disponibles`
+          : p.variants[0].colorName;
+        return `
+          <button class="search-suggestion-item" type="button" data-id="${p.id}">
+            <div class="search-suggestion-swatch" style="background:${p.variants[0].hex}"></div>
+            <div>
+              <div class="search-suggestion-name">${p.name} — ${colorLabel}</div>
+              <div class="search-suggestion-meta">${money(p.price)} MXN</div>
+            </div>
+          </button>
+        `;
+      }).join("");
 
       el.searchSuggestions.querySelectorAll(".search-suggestion-item").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -1730,7 +1679,7 @@
 
       requestAnimationFrame(() => {
         document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
-        const card = el.catalogGrid.querySelector(`[data-id="${product.id}"]`);
+        const card = el.catalogSections.querySelector(`[data-id="${product.id}"]`);
         if (card) {
           card.classList.add("flash-highlight");
           setTimeout(() => card.classList.remove("flash-highlight"), 1100);
@@ -1767,18 +1716,29 @@
     // 2) CARRITO
     // ==================================================================
 
-    function addToCart(product) {
-      const existing = state.cart.find((item) => item.product.id === product.id);
+    function addToCart(product, variant) {
+      const vid = variantId(product, variant);
+      const existing = state.cart.find((item) => item.vid === vid);
       if (existing) {
         existing.qty += 1;
       } else {
-        state.cart.push({ product, qty: 1 });
+        state.cart.push({ vid, product, variant, qty: 1 });
       }
       renderCart();
     }
 
-    function removeFromCart(productId) {
-      state.cart = state.cart.filter((item) => item.product.id !== productId);
+    // Punto de entrada desde la tarjeta del catálogo: si el modelo tiene
+    // un solo color se agrega directo, si tiene varios abrimos el selector.
+    function handleAddToCart(product) {
+      if (product.variants.length === 1) {
+        addToCart(product, product.variants[0]);
+      } else {
+        openColorPicker(product);
+      }
+    }
+
+    function removeFromCart(vid) {
+      state.cart = state.cart.filter((item) => item.vid !== vid);
       renderCart();
     }
 
@@ -1807,19 +1767,19 @@
         .map(
           (item) => `
           <div class="cart-item">
-            <div class="cart-item-swatch" style="background:${item.product.hex}"></div>
+            <div class="cart-item-swatch" style="background:${item.variant.hex}"></div>
             <div class="cart-item-info">
-              <div class="cart-item-name">${item.product.name}</div>
+              <div class="cart-item-name">${item.product.name} <span class="cart-item-color">— ${item.variant.colorName}</span></div>
               <div class="cart-item-qty">${money(item.product.price)} x ${item.qty}</div>
             </div>
-            <button class="cart-item-remove" data-id="${item.product.id}">✕</button>
+            <button class="cart-item-remove" data-vid="${item.vid}">✕</button>
           </div>
         `
         )
         .join("");
 
       el.cartItems.querySelectorAll(".cart-item-remove").forEach((btn) => {
-        btn.addEventListener("click", () => removeFromCart(btn.dataset.id));
+        btn.addEventListener("click", () => removeFromCart(btn.dataset.vid));
       });
 
       // El botón flotante de carrito solo aparece en móvil cuando hay algo en el carrito
@@ -1847,28 +1807,64 @@
       emptyCart();
     });
 
+    // Selector de color: se abre solo cuando el modelo tiene más de un color
+    function openColorPicker(product) {
+      el.colorPickerTitle.textContent = `${product.name} — ¿QUÉ COLOR?`;
+      el.colorPickerList.innerHTML = product.variants.map((v, i) => `
+        <button class="compare-picker-item" type="button" data-index="${i}">
+          <div class="compare-picker-swatch" style="background:${v.hex}"></div>
+          <div>
+            <div class="compare-picker-item-name">${v.colorName}</div>
+            <div class="compare-picker-item-meta">${v.stock > 1 ? `${v.stock} disponibles` : "1 disponible"} · ${money(product.price)} MXN</div>
+          </div>
+        </button>
+      `).join("");
+
+      el.colorPickerList.querySelectorAll(".compare-picker-item").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const variant = product.variants[Number(btn.dataset.index)];
+          addToCart(product, variant);
+          closeColorPicker();
+        });
+      });
+
+      el.colorPickerOverlay.hidden = false;
+    }
+
+    function closeColorPicker() {
+      el.colorPickerOverlay.hidden = true;
+    }
+
+    el.colorPickerClose.addEventListener("click", closeColorPicker);
+    el.colorPickerOverlay.addEventListener("click", (e) => {
+      if (e.target === el.colorPickerOverlay) closeColorPicker();
+    });
+
     // ==================================================================
-    // 3) COMPARADOR (seleccionar de una lista)
+    // 3) COMPARADOR (seleccionar de una lista, con color)
     // ==================================================================
 
     let compareTargetSlot = null; // índice del slot (0 o 1) que estamos llenando
+    const MAX_RANK = PRODUCTS.length;
 
     function openComparePicker(index) {
       compareTargetSlot = index;
-      el.comparePickerList.innerHTML = PRODUCTS.map((p) => `
-        <button class="compare-picker-item" type="button" data-id="${p.id}">
-          <div class="compare-picker-swatch" style="background:${p.hex}"></div>
+
+      const flatList = PRODUCTS.flatMap((p) => p.variants.map((v) => ({ product: p, variant: v })));
+
+      el.comparePickerList.innerHTML = flatList.map(({ product: p, variant: v }, i) => `
+        <button class="compare-picker-item" type="button" data-index="${i}">
+          <div class="compare-picker-swatch" style="background:${v.hex}"></div>
           <div>
-            <div class="compare-picker-item-name">${p.name} — ${p.colorName}</div>
+            <div class="compare-picker-item-name">${p.name} — ${v.colorName}</div>
             <div class="compare-picker-item-meta">${money(p.price)} MXN</div>
           </div>
         </button>
       `).join("");
 
-      el.comparePickerList.querySelectorAll(".compare-picker-item").forEach((btn) => {
+      el.comparePickerList.querySelectorAll(".compare-picker-item").forEach((btn, i) => {
         btn.addEventListener("click", () => {
-          const product = PRODUCTS.find((p) => p.id === btn.dataset.id);
-          state.compareSlots[compareTargetSlot] = product;
+          state.compareSlots[compareTargetSlot] = flatList[i];
           renderCompare();
           closeComparePicker();
         });
@@ -1892,8 +1888,8 @@
       renderCompare();
     });
 
-    function renderCompareSlot(slot, product, index) {
-      if (!product) {
+    function renderCompareSlot(slot, entry, index) {
+      if (!entry) {
         slot.classList.remove("filled");
         slot.innerHTML = `
           <div class="compare-empty">
@@ -1905,15 +1901,17 @@
         return;
       }
 
+      const { product, variant } = entry;
+
       slot.classList.add("filled");
       slot.innerHTML = `
         <div class="compare-filled">
-          <div class="compare-phone-swatch" style="background:${product.hex}">${product.name}</div>
+          <div class="compare-phone-swatch" style="background:${variant.hex}">${product.name}</div>
           <div class="compare-info">
             <div class="bebas compare-info-name">${product.name}</div>
-            <div class="compare-info-meta">${money(product.price)} MXN • Ranking hardware #${product.rank}/7</div>
+            <div class="compare-info-meta">${variant.colorName} • ${money(product.price)} MXN • Ranking #${product.rank}/${MAX_RANK}</div>
             <div class="compare-info-specs">
-              ${product.specs.map((s) => `<span>${s}</span>`).join("")}
+              ${productSpecsList(product).map((s) => `<span>${s}</span>`).join("")}
             </div>
           </div>
           <button class="compare-remove" data-index="${index}">✕</button>
@@ -1936,6 +1934,8 @@
       if (r.includes("IP69")) return 5;
       if (r.includes("IP68")) return 4;
       if (r.includes("IP67")) return 3;
+      if (r.includes("IP65")) return 2.5;
+      if (r.includes("IP64")) return 2.2;
       if (r.includes("IP54")) return 2;
       return 1;
     }
@@ -1944,8 +1944,12 @@
       return m ? parseInt(m[1], 10) : null;
     }
 
-    function renderCompareTable(a, b) {
+    function renderCompareTable(entryA, entryB) {
+      const a = entryA.product, b = entryB.product;
+      const va = entryA.variant, vb = entryB.variant;
+
       const rows = [
+        { label: "COLOR", va: va.colorName, vb: vb.colorName, w: null },
         { label: "PRECIO", va: `$${money(a.price)}`, vb: `$${money(b.price)}`, w: specWinner(a.price, b.price, false) },
         { label: "PROCESADOR", va: a.processor, vb: b.processor, w: specWinner(a.rank, b.rank, false) },
         { label: "RAM", va: `${a.ram} GB`, vb: `${b.ram} GB`, w: specWinner(a.ram, b.ram, true) },
@@ -1991,10 +1995,10 @@
       renderCompareSlot(el.compareSlot0, state.compareSlots[0], 0);
       renderCompareSlot(el.compareSlot1, state.compareSlots[1], 1);
 
-      const [a, b] = state.compareSlots;
-      if (a && b) {
+      const [entryA, entryB] = state.compareSlots;
+      if (entryA && entryB) {
         el.compareVerdict.hidden = false;
-        el.compareVerdict.innerHTML = renderCompareTable(a, b);
+        el.compareVerdict.innerHTML = renderCompareTable(entryA, entryB);
       } else {
         el.compareVerdict.hidden = true;
       }
