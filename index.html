@@ -103,6 +103,39 @@
 
   footer{ border-top:1px solid var(--sky-deep); padding:28px 0 44px; display:flex; justify-content:space-between; font-size:13px; color:var(--ink-soft);}
 
+  /* ---- booking modal ---- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(21,42,73,0.55); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:#fff; border-radius:22px; max-width:460px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow); padding:30px 28px;}
+  .modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .modal-head h3{font-size:19px; color:var(--navy-deep);}
+  .modal-close{background:none; border:none; font-size:20px; color:var(--ink-soft); cursor:pointer;}
+  .modal-steps{display:flex; gap:6px; margin-bottom:22px;}
+  .modal-steps span{flex:1; height:4px; border-radius:4px; background:var(--sky-deep);}
+  .modal-steps span.done{background:var(--blue);}
+  .step-panel{display:none;}
+  .step-panel.active{display:block;}
+  .svc-option{display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1.5px solid var(--sky-deep); border-radius:12px; margin-bottom:10px; cursor:pointer;}
+  .svc-option:hover{border-color:var(--blue-soft);}
+  .svc-option.selected{border-color:var(--navy); background:var(--sky);}
+  .svc-option b{display:block; font-size:14.5px; color:var(--navy-deep);}
+  .svc-option span{font-size:12.5px; color:var(--ink-soft);}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--navy-deep); margin-bottom:6px;}
+  .field input, .field textarea{width:100%; padding:11px 13px; border:1.5px solid var(--sky-deep); border-radius:10px; font-family:'Inter',sans-serif; font-size:14px;}
+  .slots-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px;}
+  .slot-btn{padding:10px 6px; border:1.5px solid var(--sky-deep); border-radius:10px; background:#fff; font-size:13.5px; cursor:pointer;}
+  .slot-btn:hover{border-color:var(--blue-soft);}
+  .slot-btn.selected{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .slot-btn:disabled{opacity:0.35; text-decoration:line-through; cursor:not-allowed;}
+  .modal-actions{display:flex; justify-content:space-between; margin-top:22px;}
+  .btn-secondary{background:none; border:none; color:var(--ink-soft); font-weight:600; font-size:14px; cursor:pointer;}
+  .confirm-summary{background:var(--sky); border-radius:14px; padding:16px 18px; font-size:14px; margin-bottom:18px;}
+  .confirm-summary div{display:flex; justify-content:space-between; padding:5px 0;}
+  .success-box{text-align:center; padding:10px 0;}
+  .success-box .big-check{font-size:44px; margin-bottom:12px;}
+  .error-msg{color:#B3261E; font-size:13px; margin-top:8px; min-height:16px;}
+
   @media (max-width:780px){
     .hero-grid{grid-template-columns:1fr;}
     .services-grid{grid-template-columns:1fr 1fr;}
@@ -125,7 +158,7 @@
       <a href="#horarios">Horarios</a>
       <a href="#ubicacion">Ubicación</a>
     </nav>
-    <button class="cta-btn" onclick="alert('Aquí conectaremos el flujo de agendar cita en el siguiente paso 🙂')">Agendar cita</button>
+    <button class="cta-btn" onclick="openBooking()">Agendar cita</button>
   </div>
 </header>
 
@@ -213,6 +246,216 @@
   <span>Consultorio Médico — Medicina Integral y Salud Ocular</span>
   <span>Página en construcción — paso 1 de 3</span>
 </footer>
+
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Agendar cita</h3>
+      <button class="modal-close" onclick="closeBooking()">✕</button>
+    </div>
+    <div class="modal-steps"><span id="dot1" class="done"></span><span id="dot2"></span><span id="dot3"></span><span id="dot4"></span></div>
+
+    <div class="step-panel active" id="panel1">
+      <div id="svcList"></div>
+      <div class="modal-actions"><span></span><button class="cta-btn" id="btnStep1" onclick="goStep(2)">Continuar</button></div>
+    </div>
+
+    <div class="step-panel" id="panel2">
+      <div class="field"><label>Elige la fecha</label><input type="date" id="fechaInput" onchange="onFechaChange()"></div>
+      <div id="slotsWrap"></div>
+      <div id="fechaError" class="error-msg"></div>
+      <div class="modal-actions"><button class="btn-secondary" onclick="goStep(1)">Atrás</button><button class="cta-btn" id="btnStep2" disabled onclick="goStep(3)">Continuar</button></div>
+    </div>
+
+    <div class="step-panel" id="panel3">
+      <div class="field"><label>Nombre completo</label><input type="text" id="nombreInput" placeholder="Tu nombre"></div>
+      <div class="field"><label>Teléfono</label><input type="tel" id="telInput" placeholder="55 1234 5678"></div>
+      <div class="field"><label>Motivo de consulta</label><textarea id="motivoInput" rows="2" placeholder="Cuéntanos brevemente qué necesitas"></textarea></div>
+      <div class="modal-actions"><button class="btn-secondary" onclick="goStep(2)">Atrás</button><button class="cta-btn" onclick="goStep(4)">Revisar y confirmar</button></div>
+    </div>
+
+    <div class="step-panel" id="panel4">
+      <div class="confirm-summary" id="confirmSummary"></div>
+      <div id="confirmError" class="error-msg"></div>
+      <div class="modal-actions"><button class="btn-secondary" onclick="goStep(3)">Atrás</button><button class="cta-btn" id="btnConfirmar" onclick="confirmarCita()">Confirmar cita</button></div>
+    </div>
+
+    <div class="step-panel" id="panel5">
+      <div class="success-box">
+        <div class="big-check">✅</div>
+        <h3>¡Cita agendada!</h3>
+        <p class="sec-sub" id="successText" style="margin:10px 0 0;"></p>
+      </div>
+      <div class="modal-actions"><span></span><button class="cta-btn" onclick="closeBooking()">Listo</button></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, doc, setDoc, getDoc, query, where, getDocs, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9klfyG7EQOSzmytIN6d9zkwQ7Yyt_Xs",
+    authDomain: "consultorio-citas-4ab5f.firebaseapp.com",
+    projectId: "consultorio-citas-4ab5f",
+    storageBucket: "consultorio-citas-4ab5f.firebasestorage.app",
+    messagingSenderId: "505379659219",
+    appId: "1:505379659219:web:20841b4a9c7fe6433fa326"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const SERVICIOS = [
+    {id:'consulta', nombre:'Consulta general', precio:500, duracion:30},
+    {id:'seguimiento', nombre:'Seguimiento', precio:350, duracion:20},
+    {id:'certificado', nombre:'Certificado médico', precio:250, duracion:15},
+    {id:'primeravez', nombre:'Primera vez', precio:500, duracion:30}
+  ];
+
+  // 1=lunes ... 6=sábado, 0=domingo (cerrado)
+  const HORARIOS = {
+    1:['09:00','14:00'], 2:['09:00','14:00'], 3:['16:00','20:00'],
+    4:['09:00','14:00'], 5:['09:00','14:00'], 6:['09:00','13:00'], 0:null
+  };
+
+  let state = { servicio:null, fecha:null, hora:null, nombre:'', tel:'', motivo:'' };
+
+  window.openBooking = function(){
+    document.getElementById('bookingModal').classList.add('open');
+    document.getElementById('fechaInput').min = new Date().toISOString().slice(0,10);
+    renderServicios();
+    goStep(1);
+  };
+  window.closeBooking = function(){
+    document.getElementById('bookingModal').classList.remove('open');
+    state = { servicio:null, fecha:null, hora:null, nombre:'', tel:'', motivo:'' };
+  };
+
+  function renderServicios(){
+    const wrap = document.getElementById('svcList');
+    wrap.innerHTML = '';
+    SERVICIOS.forEach(s=>{
+      const div = document.createElement('div');
+      div.className = 'svc-option' + (state.servicio && state.servicio.id===s.id ? ' selected':'');
+      div.innerHTML = `<div><b>${s.nombre}</b><span>${s.duracion} min</span></div><span>$${s.precio}</span>`;
+      div.onclick = ()=>{ state.servicio = s; renderServicios(); };
+      wrap.appendChild(div);
+    });
+  }
+
+  window.goStep = function(n){
+    if(n===2 && !state.servicio){ return; }
+    for(let i=1;i<=5;i++) document.getElementById('panel'+i).classList.toggle('active', i===n);
+    for(let i=1;i<=4;i++){ const dot=document.getElementById('dot'+i); if(dot) dot.classList.toggle('done', i<=n); }
+    if(n===3){
+      document.getElementById('nombreInput').value = state.nombre;
+      document.getElementById('telInput').value = state.tel;
+      document.getElementById('motivoInput').value = state.motivo;
+    }
+    if(n===4){
+      document.getElementById('confirmError').textContent = '';
+      document.getElementById('confirmSummary').innerHTML = `
+        <div><span>Servicio</span><b>${state.servicio.nombre}</b></div>
+        <div><span>Fecha</span><b>${state.fecha}</b></div>
+        <div><span>Hora</span><b>${state.hora}</b></div>
+        <div><span>Nombre</span><b>${state.nombre}</b></div>
+        <div><span>Teléfono</span><b>${state.tel}</b></div>`;
+    }
+  };
+
+  window.onFechaChange = async function(){
+    const val = document.getElementById('fechaInput').value;
+    const err = document.getElementById('fechaError');
+    err.textContent = '';
+    document.getElementById('btnStep2').disabled = true;
+    state.hora = null;
+    document.getElementById('slotsWrap').innerHTML = '';
+    if(!val) return;
+    const dow = new Date(val+'T00:00:00').getDay();
+    if(!HORARIOS[dow]){
+      err.textContent = 'Ese día el consultorio está cerrado, elige otro.';
+      return;
+    }
+    state.fecha = val;
+    await renderSlots(val, dow);
+  };
+
+  async function renderSlots(fecha, dow){
+    const wrap = document.getElementById('slotsWrap');
+    wrap.innerHTML = '<p class="sec-sub" style="margin:10px 0;">Cargando horarios...</p>';
+    const [ini, fin] = HORARIOS[dow];
+    const toMin = t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
+    const toStr = m=>{ const h=String(Math.floor(m/60)).padStart(2,'0'); const mm=String(m%60).padStart(2,'0'); return `${h}:${mm}`; };
+    const dur = state.servicio.duracion;
+    const slots = [];
+    for(let t=toMin(ini); t+dur<=toMin(fin); t+=30) slots.push(toStr(t));
+
+    const q = query(collection(db,'horarios_ocupados'), where('fecha','==',fecha));
+    const snap = await getDocs(q);
+    const ocupados = new Set(snap.docs.map(d=>d.data().hora));
+
+    wrap.innerHTML = '<div class="slots-grid" id="slotsGrid"></div>';
+    const grid = document.getElementById('slotsGrid');
+    slots.forEach(hora=>{
+      const btn = document.createElement('button');
+      btn.className = 'slot-btn';
+      btn.textContent = hora;
+      btn.disabled = ocupados.has(hora);
+      btn.onclick = ()=>{
+        state.hora = hora;
+        document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('btnStep2').disabled = false;
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  window.confirmarCita = async function(){
+    const nombre = document.getElementById('nombreInput').value.trim();
+    const tel = document.getElementById('telInput').value.trim();
+    const motivo = document.getElementById('motivoInput').value.trim();
+    if(!nombre || !tel){
+      document.getElementById('confirmError').textContent = 'Falta tu nombre o teléfono.';
+      return;
+    }
+    state.nombre = nombre; state.tel = tel; state.motivo = motivo;
+    const btn = document.getElementById('btnConfirmar');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    const slotId = `${state.fecha}_${state.hora}`;
+    try{
+      const slotRef = doc(db,'horarios_ocupados', slotId);
+      const existing = await getDoc(slotRef);
+      if(existing.exists()){
+        document.getElementById('confirmError').textContent = 'Ese horario ya se acaba de ocupar, elige otro.';
+        btn.disabled = false; btn.textContent = 'Confirmar cita';
+        goStep(2);
+        await renderSlots(state.fecha, new Date(state.fecha+'T00:00:00').getDay());
+        return;
+      }
+      await setDoc(slotRef, { fecha: state.fecha, hora: state.hora });
+      const citaRef = await addDoc(collection(db,'citas'), {
+        servicio: state.servicio.nombre,
+        fecha: state.fecha,
+        hora: state.hora,
+        nombre: state.nombre,
+        telefono: state.tel,
+        motivo: state.motivo,
+        estado: 'pendiente',
+        creado: serverTimestamp()
+      });
+      document.getElementById('successText').textContent =
+        `${state.servicio.nombre} el ${state.fecha} a las ${state.hora}. Folio: ${citaRef.id.slice(0,6).toUpperCase()}`;
+      goStep(5);
+    }catch(e){
+      console.error(e);
+      document.getElementById('confirmError').textContent = 'Hubo un error guardando tu cita, checa las reglas de Firestore e intenta de nuevo.';
+      btn.disabled = false; btn.textContent = 'Confirmar cita';
+    }
+  };
+</script>
 
 </body>
 </html>
