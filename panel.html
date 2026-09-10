@@ -136,7 +136,7 @@
   const googleProvider = new GoogleAuthProvider();
 
   // Solo estos correos pueden entrar al panel del doctor
-  const CORREOS_PERMITIDOS = ['cochinitapibilweb@gmail.com'];
+  const CORREOS_PERMITIDOS = ['cohinitapibilweb@gmail.com'];
 
   let allCitas = [];
   let currentFilter = 'hoy';
@@ -159,7 +159,6 @@
   window.doLogout = function(){ signOut(auth); };
 
   onAuthStateChanged(auth, (user)=>{
-    if(user) console.log('Correo detectado:', user.email);
     if(user && CORREOS_PERMITIDOS.includes(user.email)){
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
