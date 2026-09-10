@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del Doctor — Consultorio Médico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#FFFFFF; --sky:#EAF2FB; --sky-deep:#D9E8F8;
+    --navy:#1E3A63; --navy-deep:#152A49; --blue:#3F6FA6; --blue-soft:#AFCBEA;
+    --ink:#1B2430; --ink-soft:#5C6B7D;
+    --green:#2E7D4F; --green-tint:#E4F4EA;
+    --amber:#B3791C; --amber-tint:#FBF0DD;
+    --red:#B3261E; --red-tint:#FBE7E5;
+    --shadow: 0 20px 45px rgba(30,58,99,0.14);
+    --shadow-soft: 0 10px 26px rgba(30,58,99,0.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--sky); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.55; min-height:100vh;}
+  h1,h2,h3{font-family:'Libre Baskerville', serif;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* login screen */
+  #loginScreen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .login-card{ background:#fff; border-radius:22px; padding:38px 34px; max-width:380px; width:100%; box-shadow:var(--shadow);}
+  .login-card h1{ font-size:22px; color:var(--navy-deep); margin-bottom:6px;}
+  .login-card p.sub{ color:var(--ink-soft); font-size:14px; margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--navy-deep); margin-bottom:6px;}
+  .field input{width:100%; padding:12px 14px; border:1.5px solid var(--sky-deep); border-radius:10px; font-size:14.5px; font-family:'Inter',sans-serif;}
+  .btn{ background:var(--navy); color:#fff; border:none; padding:12px 22px; border-radius:9px; font-weight:600; font-size:14.5px; cursor:pointer; width:100%;}
+  .btn:hover{background:var(--navy-deep);}
+  .btn:disabled{opacity:0.6; cursor:not-allowed;}
+  .login-error{color:var(--red); font-size:13px; margin-top:12px; min-height:16px;}
+
+  /* dashboard */
+  #dashboard{display:none;}
+  header{background:#fff; box-shadow:0 1px 0 var(--sky-deep); padding:18px 0;}
+  .nav-row{display:flex; justify-content:space-between; align-items:center;}
+  .brand{font-family:'Libre Baskerville', serif; font-weight:700; font-size:17px; color:var(--navy-deep);}
+  .brand small{display:block; font-family:'Inter',sans-serif; font-weight:500; font-size:12px; color:var(--ink-soft);}
+  .logout-btn{background:none; border:1.5px solid var(--sky-deep); color:var(--ink-soft); padding:9px 16px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer;}
+  .logout-btn:hover{background:var(--sky);}
+
+  main{padding:32px 0 60px;}
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px;}
+  .stat-card{background:#fff; border-radius:16px; padding:20px; box-shadow:var(--shadow-soft);}
+  .stat-card .num{font-size:26px; font-weight:700; color:var(--navy-deep); font-family:'Libre Baskerville', serif;}
+  .stat-card .lbl{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+
+  .tabs{display:flex; gap:10px; margin-bottom:20px;}
+  .tab-btn{background:#fff; border:1.5px solid var(--sky-deep); color:var(--ink-soft); padding:9px 18px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer;}
+  .tab-btn.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+
+  .citas-list{display:flex; flex-direction:column; gap:12px;}
+  .cita-row{background:#fff; border-radius:16px; padding:16px 20px; box-shadow:var(--shadow-soft); display:grid; grid-template-columns:110px 1fr auto; gap:16px; align-items:center;}
+  .cita-fh{ font-family:'Inter',sans-serif;}
+  .cita-fh b{display:block; font-size:14.5px; color:var(--navy-deep);}
+  .cita-fh span{font-size:12.5px; color:var(--ink-soft);}
+  .cita-info b{display:block; font-size:14.5px; margin-bottom:2px;}
+  .cita-info span{font-size:13px; color:var(--ink-soft); display:block;}
+  .cita-actions{display:flex; align-items:center; gap:10px;}
+  select.estado-select{padding:8px 10px; border-radius:8px; border:1.5px solid var(--sky-deep); font-size:13px; font-family:'Inter',sans-serif;}
+  .badge{padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600;}
+  .badge.pendiente{background:var(--amber-tint); color:var(--amber);}
+  .badge.confirmada{background:var(--green-tint); color:var(--green);}
+  .badge.atendida{background:var(--sky); color:var(--navy);}
+  .badge.cancelada, .badge.no_asistio{background:var(--red-tint); color:var(--red);}
+  .cancel-btn{background:none; border:none; color:var(--red); font-size:13px; font-weight:600; cursor:pointer;}
+  .empty-msg{ text-align:center; color:var(--ink-soft); padding:40px 0; font-size:14.5px;}
+
+  @media (max-width:760px){
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .cita-row{grid-template-columns:1fr; gap:10px;}
+    .cita-actions{justify-content:space-between;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>Panel del doctor</h1>
+    <p class="sub">Inicia sesión para ver y administrar tus citas.</p>
+    <div class="field"><label>Correo</label><input type="email" id="loginEmail" placeholder="tucorreo@ejemplo.com"></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">Iniciar sesión</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <header>
+    <div class="wrap nav-row">
+      <div class="brand">Panel del doctor<small>Medicina Integral y Salud Ocular</small></div>
+      <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num" id="statHoy">0</div><div class="lbl">Citas de hoy</div></div>
+      <div class="stat-card"><div class="num" id="statPendientes">0</div><div class="lbl">Pendientes</div></div>
+      <div class="stat-card"><div class="num" id="statConfirmadas">0</div><div class="lbl">Confirmadas</div></div>
+      <div class="stat-card"><div class="num" id="statCanceladas">0</div><div class="lbl">Canceladas</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-f="hoy" onclick="setFilter('hoy')">Hoy</button>
+      <button class="tab-btn" data-f="proximas" onclick="setFilter('proximas')">Próximas</button>
+      <button class="tab-btn" data-f="todas" onclick="setFilter('todas')">Todas</button>
+    </div>
+
+    <div class="citas-list" id="citasList"></div>
+  </main>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9klfyG7EQOSzmytIN6d9zkwQ7Yyt_Xs",
+    authDomain: "consultorio-citas-4ab5f.firebaseapp.com",
+    projectId: "consultorio-citas-4ab5f",
+    storageBucket: "consultorio-citas-4ab5f.firebasestorage.app",
+    messagingSenderId: "505379659219",
+    appId: "1:505379659219:web:20841b4a9c7fe6433fa326"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let allCitas = [];
+  let currentFilter = 'hoy';
+  let unsub = null;
+
+  window.doLogin = async function(){
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const errBox = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errBox.textContent = '';
+    if(!email || !pass){ errBox.textContent = 'Escribe tu correo y contraseña.'; return; }
+    btn.disabled = true; btn.textContent = 'Entrando...';
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+    }catch(e){
+      errBox.textContent = 'Correo o contraseña incorrectos.';
+    }
+    btn.disabled = false; btn.textContent = 'Iniciar sesión';
+  };
+
+  window.doLogout = function(){ signOut(auth); };
+
+  onAuthStateChanged(auth, (user)=>{
+    if(user){
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      startListening();
+    }else{
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+      if(unsub) unsub();
+    }
+  });
+
+  function startListening(){
+    unsub = onSnapshot(collection(db,'citas'), (snap)=>{
+      allCitas = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      allCitas.sort((a,b)=> (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+      renderStats();
+      renderList();
+    });
+  }
+
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+  function renderStats(){
+    const hoy = todayStr();
+    document.getElementById('statHoy').textContent = allCitas.filter(c=>c.fecha===hoy).length;
+    document.getElementById('statPendientes').textContent = allCitas.filter(c=>c.estado==='pendiente').length;
+    document.getElementById('statConfirmadas').textContent = allCitas.filter(c=>c.estado==='confirmada').length;
+    document.getElementById('statCanceladas').textContent = allCitas.filter(c=>c.estado==='cancelada').length;
+  }
+
+  window.setFilter = function(f){
+    currentFilter = f;
+    document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.f===f));
+    renderList();
+  };
+
+  function renderList(){
+    const hoy = todayStr();
+    let list = allCitas;
+    if(currentFilter==='hoy') list = allCitas.filter(c=>c.fecha===hoy);
+    else if(currentFilter==='proximas') list = allCitas.filter(c=>c.fecha>=hoy && c.estado!=='cancelada');
+
+    const wrap = document.getElementById('citasList');
+    if(list.length===0){
+      wrap.innerHTML = '<div class="empty-msg">No hay citas en esta vista.</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    list.forEach(c=>{
+      const row = document.createElement('div');
+      row.className = 'cita-row';
+      row.innerHTML = `
+        <div class="cita-fh"><b>${c.hora||''}</b><span>${c.fecha||''}</span></div>
+        <div class="cita-info">
+          <b>${c.nombre||'(sin nombre)'}</b>
+          <span>${c.servicio||''} · ${c.telefono||''}</span>
+          <span>${c.motivo? 'Motivo: '+c.motivo : ''}</span>
+        </div>
+        <div class="cita-actions">
+          <span class="badge ${c.estado}">${etiquetaEstado(c.estado)}</span>
+          <select class="estado-select" data-id="${c.id}" data-fecha="${c.fecha}" data-hora="${c.hora}">
+            ${['pendiente','confirmada','atendida','cancelada','no_asistio'].map(op=>
+              `<option value="${op}" ${c.estado===op?'selected':''}>${etiquetaEstado(op)}</option>`).join('')}
+          </select>
+        </div>`;
+      wrap.appendChild(row);
+    });
+
+    document.querySelectorAll('.estado-select').forEach(sel=>{
+      sel.onchange = async ()=>{
+        const nuevoEstado = sel.value;
+        const citaId = sel.dataset.id;
+        await updateDoc(doc(db,'citas',citaId), { estado: nuevoEstado });
+        if(nuevoEstado==='cancelada'){
+          try{ await deleteDoc(doc(db,'horarios_ocupados', `${sel.dataset.fecha}_${sel.dataset.hora}`)); }
+          catch(e){ /* si no existe, no pasa nada */ }
+        }
+      };
+    });
+  }
+
+  function etiquetaEstado(e){
+    return { pendiente:'Pendiente', confirmada:'Confirmada', atendida:'Atendida',
+             cancelada:'Cancelada', no_asistio:'No asistió' }[e] || e;
+  }
+</script>
+
+</body>
+</html>
