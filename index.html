@@ -122,7 +122,7 @@
   .svc-option span{font-size:12.5px; color:var(--ink-soft);}
   .field{margin-bottom:14px;}
   .field label{display:block; font-size:13px; font-weight:600; color:var(--navy-deep); margin-bottom:6px;}
-  .field input, .field textarea{width:100%; padding:11px 13px; border:1.5px solid var(--sky-deep); border-radius:10px; font-family:'Inter',sans-serif; font-size:14px;}
+  .field input, .field textarea{width:100%; padding:11px 13px; border:1.5px solid var(--sky-deep); border-radius:10px; font-family:'Inter',sans-serif; font-size:16px;}
   .slots-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px;}
   .slot-btn{padding:10px 6px; border:1.5px solid var(--sky-deep); border-radius:10px; background:#fff; font-size:13.5px; cursor:pointer;}
   .slot-btn:hover{border-color:var(--blue-soft);}
@@ -135,6 +135,48 @@
   .success-box{text-align:center; padding:10px 0;}
   .success-box .big-check{font-size:44px; margin-bottom:12px;}
   .error-msg{color:#B3261E; font-size:13px; margin-top:8px; min-height:16px;}
+
+  /* ---- reveal on scroll ---- */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.visible{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .reveal{ transition:none; opacity:1; transform:none; } }
+
+  /* ---- nav active state + underline ---- */
+  .nav-links a{ position:relative; padding-bottom:4px; transition:color 0.2s ease;}
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:0; height:2px; width:0;
+    background:var(--navy); border-radius:2px; transition:width 0.25s ease;
+  }
+  .nav-links a:hover::after, .nav-links a.active::after{ width:100%; }
+  .nav-links a.active{ color:var(--navy); }
+
+  /* ---- buttons: subtle lift + press ---- */
+  .cta-btn, .ghost-btn{ transition:transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+  .cta-btn:hover, .ghost-btn:hover{ transform:translateY(-2px); }
+  .cta-btn:active, .ghost-btn:active{ transform:translateY(0) scale(0.97); }
+
+  /* ---- service cards: lift + icon pop on hover ---- */
+  .service-card{ transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+  .service-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow); border-color:var(--blue-soft); }
+  .service-card:hover .service-dot{ transform:scale(1.12) rotate(-6deg); }
+  .service-dot{ transition:transform 0.25s ease; }
+
+  /* ---- schedule rows: soft highlight on hover ---- */
+  .sched-row{ transition:background 0.2s ease, padding-left 0.2s ease; border-radius:8px; }
+  .sched-row:hover{ background:rgba(63,111,166,0.08); padding-left:8px; }
+
+  /* ---- emblem card: gentle float + shine sweep ---- */
+  .emblem-card{ animation:emblemFloat 5s ease-in-out infinite; overflow:hidden; }
+  @keyframes emblemFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  .emblem-card::before{
+    content:''; position:absolute; top:0; left:-60%; width:40%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform:skewX(-20deg); animation:emblemShine 6s ease-in-out infinite;
+  }
+  @keyframes emblemShine{ 0%{ left:-60%;} 40%,100%{ left:130%;} }
+  @media (prefers-reduced-motion:reduce){ .emblem-card{ animation:none;} .emblem-card::before{ animation:none;} }
+
+  /* ---- map + location fade-in already covered by .reveal ---- */
 
   @media (max-width:780px){
     .hero-grid{grid-template-columns:1fr;}
@@ -166,7 +208,7 @@
 
   <section class="hero">
     <div class="wrap hero-grid">
-      <div>
+      <div class="reveal" id="heroText">
         <div class="eyebrow">MEDICINA INTEGRAL Y SALUD OCULAR</div>
         <h1>Atención médica integral, con calidez y experiencia</h1>
         <p class="sub">Control de enfermedades crónicas, cuidado del pie diabético y procedimientos menores, en un consultorio de confianza.</p>
@@ -175,7 +217,7 @@
           <button class="ghost-btn" onclick="document.getElementById('ubicacion').scrollIntoView({behavior:'smooth'})">Cómo llegar</button>
         </div>
       </div>
-      <div class="emblem-card">
+      <div class="emblem-card reveal" style="transition-delay:0.12s">
         <img src="logomedicina.png" alt="Emblema del consultorio">
         <h3>Consultorio Médico</h3>
         <p>Medicina Integral y Salud Ocular</p>
@@ -185,29 +227,29 @@
 
   <section id="servicios">
     <div class="wrap">
-      <div class="sec-label">Servicios</div>
-      <h2>¿Qué podemos atender por ti?</h2>
-      <p class="sec-sub">Consulta y seguimiento para enfermedades crónicas y procedimientos menores comunes.</p>
+      <div class="sec-label reveal">Servicios</div>
+      <h2 class="reveal" style="transition-delay:0.05s">¿Qué podemos atender por ti?</h2>
+      <p class="sec-sub reveal" style="transition-delay:0.1s">Consulta y seguimiento para enfermedades crónicas y procedimientos menores comunes.</p>
       <div class="services-grid">
-        <div class="service-card"><div class="service-dot">💉</div><h3>Diabetes e hipertensión</h3><p>Control y seguimiento continuo de ambos padecimientos.</p></div>
-        <div class="service-card"><div class="service-dot">🦶</div><h3>Pie diabético</h3><p>Cuidado y prevención de complicaciones en el pie.</p></div>
-        <div class="service-card"><div class="service-dot">🧠</div><h3>Neuropatía diabética</h3><p>Valoración y manejo de la neuropatía asociada a diabetes.</p></div>
-        <div class="service-card"><div class="service-dot">🩸</div><h3>Triglicéridos y colesterol</h3><p>Control de niveles y seguimiento con estudios de laboratorio.</p></div>
-        <div class="service-card"><div class="service-dot">🌿</div><h3>Intestino perezoso</h3><p>Tratamiento para el control del tránsito intestinal.</p></div>
-        <div class="service-card"><div class="service-dot">🩹</div><h3>Retiro/colocación de implante</h3><p>Procedimiento de retiro o colocación de implante subdérmico.</p></div>
-        <div class="service-card"><div class="service-dot">🔧</div><h3>Retiro de abscesos</h3><p>Drenaje y tratamiento de abscesos.</p></div>
-        <div class="service-card"><div class="service-dot">🦵</div><h3>Uñas enterradas</h3><p>Tratamiento y corrección de uñas encarnadas.</p></div>
-        <div class="service-card"><div class="service-dot">💇</div><h3>Caída de cabello</h3><p>Valoración y manejo de la pérdida de cabello.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.02s"><div class="service-dot">💉</div><h3>Diabetes e hipertensión</h3><p>Control y seguimiento continuo de ambos padecimientos.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.06s"><div class="service-dot">🦶</div><h3>Pie diabético</h3><p>Cuidado y prevención de complicaciones en el pie.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.10s"><div class="service-dot">🧠</div><h3>Neuropatía diabética</h3><p>Valoración y manejo de la neuropatía asociada a diabetes.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.14s"><div class="service-dot">🩸</div><h3>Triglicéridos y colesterol</h3><p>Control de niveles y seguimiento con estudios de laboratorio.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.18s"><div class="service-dot">🌿</div><h3>Intestino perezoso</h3><p>Tratamiento para el control del tránsito intestinal.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.22s"><div class="service-dot">🩹</div><h3>Retiro/colocación de implante</h3><p>Procedimiento de retiro o colocación de implante subdérmico.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.26s"><div class="service-dot">🔧</div><h3>Retiro de abscesos</h3><p>Drenaje y tratamiento de abscesos.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.30s"><div class="service-dot">🦵</div><h3>Uñas enterradas</h3><p>Tratamiento y corrección de uñas encarnadas.</p></div>
+        <div class="service-card reveal" style="transition-delay:0.34s"><div class="service-dot">💇</div><h3>Caída de cabello</h3><p>Valoración y manejo de la pérdida de cabello.</p></div>
       </div>
     </div>
   </section>
 
   <section id="horarios">
     <div class="wrap">
-      <div class="sec-label">Horarios</div>
-      <h2>Horarios de atención</h2>
-      <p class="sec-sub">Consulta los días y horas disponibles antes de agendar tu cita.</p>
-      <div class="sched-card">
+      <div class="sec-label reveal">Horarios</div>
+      <h2 class="reveal" style="transition-delay:0.05s">Horarios de atención</h2>
+      <p class="sec-sub reveal" style="transition-delay:0.1s">Consulta los días y horas disponibles antes de agendar tu cita.</p>
+      <div class="sched-card reveal">
         <div class="sched-row"><span class="day">Lunes</span><span class="hours">09:00 — 14:00</span></div>
         <div class="sched-row"><span class="day">Martes</span><span class="hours">09:00 — 14:00</span></div>
         <div class="sched-row"><span class="day">Miércoles</span><span class="hours">16:00 — 20:00</span></div>
@@ -221,14 +263,14 @@
 
   <section id="ubicacion">
     <div class="wrap">
-      <div class="sec-label">Ubicación</div>
-      <h2>Encuéntranos</h2>
-      <p class="sec-sub">Da clic para ver la ruta directa en Google Maps.</p>
+      <div class="sec-label reveal">Ubicación</div>
+      <h2 class="reveal" style="transition-delay:0.05s">Encuéntranos</h2>
+      <p class="sec-sub reveal" style="transition-delay:0.1s">Da clic para ver la ruta directa en Google Maps.</p>
       <div class="loc-grid">
-        <div class="map-frame">
+        <div class="map-frame reveal">
           <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3756.812283355278!2d-98.98639245762413!3d19.678012400000004!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ed66f126a99d%3A0x452b434d8be75f13!2sConsultorio%20Medicina%20Integral%20y%20Salud%20Ocular!5e0!3m2!1ses-419!2smx!4v1789065273052!5m2!1ses-419!2smx" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
-        <div class="loc-details">
+        <div class="loc-details reveal" style="transition-delay:0.1s">
           <p><span class="label">Consultorio</span>Medicina Integral y Salud Ocular</p>
           <p><span class="label">Teléfono</span>55 1234 5678</p>
           <p><span class="label">WhatsApp</span>Disponible desde el botón de agendar</p>
@@ -290,6 +332,30 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Revela elementos con la clase .reveal a medida que entran en pantalla
+  const revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el=> revealObserver.observe(el));
+
+  // Resalta en el menú la sección que se está viendo actualmente
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = Array.from(navLinks).map(a=> document.querySelector(a.getAttribute('href')));
+  const navObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if(link) link.classList.toggle('active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  sections.forEach(sec=>{ if(sec) navObserver.observe(sec); });
+</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
