@@ -83,10 +83,8 @@
 <div id="loginScreen">
   <div class="login-card">
     <h1>Panel del doctor</h1>
-    <p class="sub">Inicia sesión para ver y administrar tus citas.</p>
-    <div class="field"><label>Correo</label><input type="email" id="loginEmail" placeholder="tucorreo@ejemplo.com"></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••"></div>
-    <button class="btn" id="loginBtn" onclick="doLogin()">Iniciar sesión</button>
+    <p class="sub">Inicia sesión con tu cuenta de Google para ver y administrar tus citas.</p>
+    <button class="btn" id="loginBtn" onclick="doLogin()">Iniciar sesión con Google</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
@@ -119,7 +117,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -135,34 +133,39 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // Solo estos correos pueden entrar al panel del doctor
+  const CORREOS_PERMITIDOS = ['cochinitapibilweb@gmail.com'];
 
   let allCitas = [];
   let currentFilter = 'hoy';
   let unsub = null;
 
   window.doLogin = async function(){
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPass').value;
     const errBox = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
     errBox.textContent = '';
-    if(!email || !pass){ errBox.textContent = 'Escribe tu correo y contraseña.'; return; }
     btn.disabled = true; btn.textContent = 'Entrando...';
     try{
-      await signInWithEmailAndPassword(auth, email, pass);
+      await signInWithPopup(auth, googleProvider);
     }catch(e){
-      errBox.textContent = 'Correo o contraseña incorrectos.';
+      console.error(e);
+      errBox.textContent = 'No se pudo iniciar sesión, intenta de nuevo.';
     }
-    btn.disabled = false; btn.textContent = 'Iniciar sesión';
+    btn.disabled = false; btn.textContent = 'Iniciar sesión con Google';
   };
 
   window.doLogout = function(){ signOut(auth); };
 
   onAuthStateChanged(auth, (user)=>{
-    if(user){
+    if(user && CORREOS_PERMITIDOS.includes(user.email)){
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       startListening();
+    }else if(user){
+      document.getElementById('loginError').textContent = 'Esta cuenta de Google no tiene acceso al panel.';
+      signOut(auth);
     }else{
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('dashboard').style.display = 'none';
