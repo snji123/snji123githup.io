@@ -159,6 +159,7 @@
   window.doLogout = function(){ signOut(auth); };
 
   onAuthStateChanged(auth, (user)=>{
+    if(user) console.log('Correo detectado:', user.email);
     if(user && CORREOS_PERMITIDOS.includes(user.email)){
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
